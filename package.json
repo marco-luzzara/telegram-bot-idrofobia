@@ -1,0 +1,27 @@
+{
+  "name": "idrofobia-bot",
+  "version": "1.0.0",
+  "description": "telegram bot for the support of game Idrofobia",
+  "main": "index.js",
+  "dependencies": {
+    "telegraf": "^4.7.0"
+  },
+  "scripts": {
+    "prestart": "npx tsc",
+    "start": "node out/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marco-luzzara/telegram-bot-idrofobia.git"
+  },
+  "author": "Luzzara Marco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marco-luzzara/telegram-bot-idrofobia/issues"
+  },
+  "homepage": "https://github.com/marco-luzzara/telegram-bot-idrofobia#readme",
+  "devDependencies": {
+    "typescript": "^4.6.3"
+  }
+}

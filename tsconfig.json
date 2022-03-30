@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "noEmitOnError": true,
+        "target": "ES2015",
+        "outDir": "out",
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "**/*.spec.ts"]
+  }
