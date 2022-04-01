@@ -1,5 +1,7 @@
 # custom
 out/
+envs/*
+!/envs/sample.env
 
 # Logs
 logs
