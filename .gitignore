@@ -2,6 +2,7 @@
 out/
 envs/*
 !/envs/sample.env
+scripts/docker/db/
 
 # Logs
 logs

@@ -1,10 +1,11 @@
 {
     "compilerOptions": {
-        "rootDir": "src",
+        "moduleResolution": "node",
+        "rootDir": ".",
         "noEmitOnError": true,
         "target": "ES2015",
         "outDir": "out",
     },
-    "include": ["src/"],
+    "include": ["src/", "tests/"],
     "exclude": ["node_modules", "**/*.spec.ts"]
-  }
+}
