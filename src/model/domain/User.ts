@@ -15,12 +15,13 @@ export class User {
 export class PlayingUser extends User {
     private userRepository: IUserRepository
 
-    target: PlayingUser
+    id: number
+    target: number
     lastKill: Date
 
     constructor(userRepository: IUserRepository, 
         userInfo: UserInfo, 
-        target: PlayingUser, 
+        target: number, 
         lastKill: Date) {
         super(userInfo)
         this.userRepository = userRepository
@@ -29,16 +30,20 @@ export class PlayingUser extends User {
     }
 
     async killTarget(): Promise<void> {
-        let targetOfKilledUser = this.target.target
-        this.target.target = null
-        this.target = targetOfKilledUser
+        if (this.isWinner())
+            throw new Error("You are the last one, you can only kill yourself")
 
-        // await this.userRepository.update(this)
-        // await this.userRepository.update(this.target)
+        const killedUser = await this.userRepository.getById(this.target)
+        const killedUserTarget = killedUser.target
+
+        killedUser.target = null
+        this.target = killedUserTarget
+
+        await this.userRepository.update(this, killedUser)
     }
 
     isWinner(): boolean {
-        return this.target == this
+        return this.target == this.id
     }
 }
 

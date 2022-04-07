@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS players (
 CREATE TABLE IF NOT EXISTS idrofobia_players (
     id INT,
     telegram_id VARCHAR(100) NOT NULL,
-    last_kill TIMESTAMP,
+    last_kill TIMESTAMP WITH TIME ZONE,
     target INT,
     PRIMARY KEY (id),
     UNIQUE (telegram_id),

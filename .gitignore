@@ -3,6 +3,8 @@ out/
 envs/*
 !/envs/sample.env
 scripts/docker/db/
+config/*
+!/config/test.json
 
 # Logs
 logs
