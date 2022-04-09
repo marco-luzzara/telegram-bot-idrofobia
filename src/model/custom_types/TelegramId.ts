@@ -1,5 +1,5 @@
 export default class TelegramId {
-    readonly telegramId: string
+    private readonly telegramId: string
     constructor(telegramId: string) {
         this.telegramId = telegramId
         // TODO: implement validation

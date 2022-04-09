@@ -1,4 +1,5 @@
 import timespan from "timespan"
+import { strict as assert } from 'assert';
 
 import TelegramId from "../custom_types/TelegramId"
 import UserInfo from "../custom_types/UserInfo"
@@ -13,37 +14,46 @@ export class User {
 }
 
 export class PlayingUser extends User {
-    private userRepository: IUserRepository
-
     id: number
-    target: number
+    target: PlayingUser
     lastKill: Date
 
-    constructor(userRepository: IUserRepository, 
+    constructor(
         userInfo: UserInfo, 
-        target: number, 
-        lastKill: Date) {
+        target: PlayingUser, 
+        lastKill: Date) 
+    {
         super(userInfo)
-        this.userRepository = userRepository
         this.target = target
         this.lastKill = lastKill
     }
 
-    async killTarget(): Promise<void> {
-        if (this.isWinner())
-            throw new Error("You are the last one, you can only kill yourself")
+    killTarget(): void {
+        assert(this.isPlaying(), 'The game has not been started yet')
+        assert(!this.isWinner(), 'There is no other player to kill but yourself')
+        assert(!this.isDead(), 'A dead player cannot kill anyone')
 
-        const killedUser = await this.userRepository.getById(this.target)
+        const killedUser = this.target
         const killedUserTarget = killedUser.target
 
         killedUser.target = null
         this.target = killedUserTarget
 
-        await this.userRepository.update(this, killedUser)
+        this.lastKill = new Date()
+
+        //await this.userRepository.update(this, killedUser)
     }
 
     isWinner(): boolean {
-        return this.target == this.id
+        return this.target === this
+    }
+
+    isDead(): boolean {
+        return this.target === null
+    }
+
+    isPlaying(): boolean {
+        return this.lastKill !== null
     }
 }
 
@@ -59,11 +69,11 @@ export class AdminUser {
     }
 
     async killPlayer(player: PlayingUser): Promise<void> {
-        let playerToAssignNewTarget = await this.userRepository.findPlayerThatHasTarget(player)
-        let currentPlayerTarget = player.target
+        // let playerToAssignNewTarget = await this.userRepository.findPlayerThatHasTarget(player)
+        // let currentPlayerTarget = player.target
 
-        playerToAssignNewTarget.target = currentPlayerTarget
-        player.target = null
+        // playerToAssignNewTarget.target = currentPlayerTarget
+        // player.target = null
     }
 
     async removeIdlePlayers(timeSpan: timespan.TimeSpan): Promise<void> {

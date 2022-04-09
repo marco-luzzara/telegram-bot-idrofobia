@@ -1,7 +1,8 @@
-import { PlayingUser } from '../../../src/model/domain/User'
 import { PlayingUserModel, UserModel } from '../../../src/data/model/UserModel'
 import UserRepository from '../../../src/data/repositories/UserRepository'
 import { dbInstance } from '../../../src/data/DbConnectionUtils'
+import IUserRepository from '../../../src/model/interfaces/data/IUserRepository'
+import TelegramId from '../../../src/model/custom_types/TelegramId'
 
 beforeEach(async () => {
     await dbInstance.sync({ force: true })
@@ -19,7 +20,8 @@ async function createFakePlayingUserDbObject(seed: string): Promise<PlayingUserM
             {
                 id: user.id,
                 telegramId: seed,
-                lastKill: new Date()
+                lastKill: new Date(),
+                profilePictureUrl: "http://myphoto.com"
             }
         )
 
@@ -31,16 +33,40 @@ async function seedDbWithRingOf3Players(): Promise<PlayingUserModel[]> {
     const playingUser2 = await createFakePlayingUserDbObject('user2')
     const playingUser3 = await createFakePlayingUserDbObject('user3')
 
-    await playingUser1.setTarget(playingUser2)
-    await playingUser2.setTarget(playingUser3)
-    await playingUser3.setTarget(playingUser1)
+    await playingUser1.setTargetUser(playingUser2)
+    await playingUser2.setTargetUser(playingUser3)
+    await playingUser3.setTargetUser(playingUser1)
 
     return [playingUser1, playingUser2, playingUser3]
 }
 
-test('findPlayerThatHasTarget should return the player that has the specified target', async () => {
-    const players = await seedDbWithRingOf3Players()
-    const repo = new UserRepository()
+test('test for update, TODO: reload necessary?', async () => {
+    await seedDbWithRingOf3Players()
+    const repo: IUserRepository = new UserRepository()
+    const playingUserModel = await repo.getByTelegramId(new TelegramId('user2'), 2)
+    const playingUser = playingUserModel.getPlayingUser(2)
+    const killedUser = playingUser.target
+    playingUser.killTarget()
 
-    // await repo.findPlayerThatHasTarget(players[])
+    await playingUserModel.targetUser.updateFromPlayingUser(killedUser)
+    // for some reason the foreignkey is still accessible without a reload
+    await playingUserModel.targetUser.reload()
+    await playingUserModel.updateFromPlayingUser(playingUser)
+    await playingUserModel.reload()
+
+    expect(playingUserModel.targetUser.telegramId).toBe('user1')
+    expect(await (await repo.getByTelegramId(new TelegramId('user3'))).getTargetUser()).toBeNull()
+});
+
+test('given a telegramId, when getByTelegramId, it returns the user associated to that id', async () => {
+    const players = await seedDbWithRingOf3Players()
+    const repo: IUserRepository = new UserRepository()
+
+    const player = await repo.getByTelegramId(new TelegramId('user2'))
+
+    expect(player.telegramId).toBe(players[1].telegramId)
+
+
+
+    // expect(playingUser.id).toBe(players[0].id)
 });
