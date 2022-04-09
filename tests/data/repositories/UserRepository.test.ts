@@ -65,8 +65,13 @@ test('given a telegramId, when getByTelegramId, it returns the user associated t
     const player = await repo.getByTelegramId(new TelegramId('user2'))
 
     expect(player.telegramId).toBe(players[1].telegramId)
+});
 
+test('given a telegramId, when getByTelegramId and id not exists, it returns null', async () => {
+    const players = await seedDbWithRingOf3Players()
+    const repo: IUserRepository = new UserRepository()
 
+    const player = await repo.getByTelegramId(new TelegramId('user10'))
 
-    // expect(playingUser.id).toBe(players[0].id)
+    expect(player).toBeNull()
 });

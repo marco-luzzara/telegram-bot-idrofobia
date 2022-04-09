@@ -1,4 +1,4 @@
-import timespan from "timespan"
+import * as timespan from "timespan"
 import { strict as assert } from 'assert';
 
 import TelegramId from "../custom_types/TelegramId"
@@ -40,8 +40,13 @@ export class PlayingUser extends User {
         this.target = killedUserTarget
 
         this.lastKill = new Date()
+    }
 
-        //await this.userRepository.update(this, killedUser)
+    isIdle(now: Date, idleTimeSpan: timespan.TimeSpan): boolean {
+        assert(this.isPlaying(), `player ${this.id} cannot be idle if it is not playing`)
+
+        const playerIdleTime = timespan.fromDates(this.lastKill, now)
+        return playerIdleTime.totalSeconds() > idleTimeSpan.totalSeconds()
     }
 
     isWinner(): boolean {
@@ -58,26 +63,46 @@ export class PlayingUser extends User {
 }
 
 export class AdminUser {
-    private userRepository: IUserRepository
-
-    constructor(userRepository: IUserRepository) {
-        this.userRepository = userRepository
-    }
-
     startGame(): void {
         this.shuffleTargets()
     }
 
-    async killPlayer(player: PlayingUser): Promise<void> {
-        // let playerToAssignNewTarget = await this.userRepository.findPlayerThatHasTarget(player)
-        // let currentPlayerTarget = player.target
-
-        // playerToAssignNewTarget.target = currentPlayerTarget
-        // player.target = null
+    /**
+     * kill the player that is the target of `player`
+     * @param player the player whose target must be killed
+     */
+    killPlayerTarget(player: PlayingUser): void {
+        player.killTarget()
     }
 
-    async removeIdlePlayers(timeSpan: timespan.TimeSpan): Promise<void> {
+    /**
+     * kill those players that have not killed their target within the `idleTimeSpan` time.
+     * these players are called idle players.
+     * @param players the list of possible players to kill
+     * @param idleTimeSpan the maximum amount of time a player can play without killing anyone
+     */
+    killIdlePlayers(players: Iterable<PlayingUser>, idleTimeSpan: timespan.TimeSpan): void {
+        let firstNotIdle = undefined
+        let previousNotIdle = undefined
+        const idleCheckTime = new Date()
 
+        for (let player of players) {
+            if (player.isIdle(idleCheckTime, idleTimeSpan)) {
+                player.target = null
+                continue
+            }
+
+            if (firstNotIdle === undefined) {
+                firstNotIdle = player
+                previousNotIdle = player
+                continue
+            }
+
+            previousNotIdle.target = player
+            previousNotIdle = player
+        }
+
+        previousNotIdle.target = firstNotIdle
     }
 
     shuffleTargets(): void {
