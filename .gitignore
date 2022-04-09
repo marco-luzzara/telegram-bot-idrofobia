@@ -5,6 +5,7 @@ envs/*
 scripts/docker/db/
 config/*
 !/config/test.json
+.vscode/
 
 # Logs
 logs
