@@ -63,8 +63,13 @@ export class PlayingUser extends User {
 }
 
 export class AdminUser {
-    startGame(): void {
-        this.shuffleTargets()
+    /**
+     * Start (or restart) the game by assigning targets until they form a ring.
+     * lastKill fields are assigned as the current timestamp
+     * @param players 
+     */
+    startGame(players: Iterable<PlayingUser>): void {
+        this.createRing(players, true)
     }
 
     /**
@@ -93,8 +98,7 @@ export class AdminUser {
             }
 
             if (firstNotIdle === undefined) {
-                firstNotIdle = player
-                previousNotIdle = player
+                firstNotIdle = previousNotIdle = player
                 continue
             }
 
@@ -107,5 +111,29 @@ export class AdminUser {
 
     shuffleTargets(): void {
 
+    }
+
+    private createRing(players: Iterable<PlayingUser>, initializeLastKill: boolean): void {
+        let firstPlayer = undefined
+        let previousPlayer = undefined
+        const startingGameDate = new Date()
+        let initLastKillIfNecessary = (player: PlayingUser) => {
+            if (initializeLastKill)
+                player.lastKill = startingGameDate
+        }
+
+        for (let player of players) {
+            if (previousPlayer === undefined) {
+                firstPlayer = player
+                initLastKillIfNecessary(player)
+            }
+            else {
+                previousPlayer.target = player
+                initLastKillIfNecessary(player)
+            }
+            previousPlayer = player
+        }
+
+        previousPlayer.target = firstPlayer
     }
 }

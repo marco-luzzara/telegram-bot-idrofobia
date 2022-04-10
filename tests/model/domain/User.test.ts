@@ -144,3 +144,20 @@ test('given an admin user, when he kills idle players and all but one are idles,
     expect(players[0].isDead() && players[2].isDead()).toBeTruthy()
     expect(players[1].isWinner()).toBeTruthy()
 })
+
+test('given an admin user, when he starts the game, the targets and lastKill are assigned', () => {
+    const player1 = createFakeUser(null, null)
+    const player2 = createFakeUser(null, null)
+    const player3 = createFakeUser(null, null)
+    const admin = new AdminUser()
+
+    admin.startGame((function* () { yield player1; yield player2; yield player3; })())
+
+    expect([player1, player2, player3]).not.toContain(null)
+    expect(player1.target).toEqual(player2)
+    expect(player2.target).toEqual(player3)
+    expect(player3.target).toEqual(player1)
+    expect(player1.lastKill).not.toBeNull()
+    expect(player2.lastKill).not.toBeNull()
+    expect(player3.lastKill).not.toBeNull()
+})
