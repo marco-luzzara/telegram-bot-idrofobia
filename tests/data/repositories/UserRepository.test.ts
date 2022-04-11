@@ -42,24 +42,6 @@ async function seedDbWithRingOf3Players(): Promise<PlayingUserModel[]> {
     return [playingUser1, playingUser2, playingUser3]
 }
 
-// test('test for update, TODO: reload necessary?', async () => {
-//     await seedDbWithRingOf3Players()
-//     const repo: IUserRepository = new UserRepository()
-//     const playingUserModel = await repo.getByTelegramId(new TelegramId('user2'), 2)
-//     const playingUser = playingUserModel.getPlayingUser(2)
-//     const killedUser = playingUser.target
-//     playingUser.killTarget()
-
-//     await playingUserModel.targetUser.updateFromPlayingUser(killedUser)
-//     // for some reason the foreignkey is still accessible without a reload
-//     await playingUserModel.targetUser.reload()
-//     await playingUserModel.updateFromPlayingUser(playingUser)
-//     await playingUserModel.reload()
-
-//     expect(playingUserModel.targetUser.telegramId).toBe('user1')
-//     expect(await (await repo.getByTelegramId(new TelegramId('user3'))).getTargetUser()).toBeNull()
-// });
-
 test('given a telegramId, when getUserByTelegramId, it returns the user associated to that id', async () => {
     await seedDbWithRingOf3Players()
     const repo: IUserRepository = new UserRepository()
@@ -127,7 +109,7 @@ test('given a user with a changed field, when i want to save it, it is persisted
     const user = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'))
     user.lastKill = new Date(2000, 12, 1)
 
-    await repo.saveExistingUser(user)
+    await repo.saveExistingUsers(user)
 
     const updatedUser = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'))
     expect(updatedUser.lastKill).toEqual(new Date(2000, 12, 1))
@@ -143,7 +125,7 @@ test(`given a user with a null target, when i want to reassign the target,
     const user2 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user2'))
     user1.target = user2
 
-    await repo.saveExistingUser(user1)
+    await repo.saveExistingUsers(user1)
 
     const updatedUser = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
     expect(updatedUser.target.id).toBe(user2.id)
@@ -157,7 +139,7 @@ test(`given a user with a target, when i want to reassign the target to null,
     const user1 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
     user1.target = null
 
-    await repo.saveExistingUser(user1)
+    await repo.saveExistingUsers(user1)
 
     const updatedUser = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
     expect(updatedUser.target).toBeNull()

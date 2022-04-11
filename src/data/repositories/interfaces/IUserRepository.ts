@@ -26,5 +26,5 @@ export default interface IUserRepository {
      * loaded, then it is updated as well
      * @param playingUser the user to update
      */
-    saveExistingUser(playingUser: PlayingUser): Promise<void>;
+    saveExistingUsers(...playingUsers: PlayingUser[]): Promise<void>;
 }

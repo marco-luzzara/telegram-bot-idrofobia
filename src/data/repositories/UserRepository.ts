@@ -3,6 +3,7 @@ import { PlayingUserModel, UserModel } from '../model/UserModel'
 import IUserRepository from './interfaces/IUserRepository'
 import TelegramId from '../../model/custom_types/TelegramId';
 import { Includeable } from 'sequelize/types';
+import { dbInstance } from '../DbConnectionUtils';
 
 export default class UserRepository implements IUserRepository {
     // async findPlayerThatHasTarget(target: PlayingUser, nestedLevel: number): Promise<PlayingUserModel> {
@@ -48,11 +49,17 @@ export default class UserRepository implements IUserRepository {
             )).map(m => m.getPlayingUser())
     }
 
-    async saveExistingUser(playingUser: PlayingUser): Promise<void> {
-        const data = PlayingUserModel.getModelDataFromDomainUser(playingUser)
-        await PlayingUserModel.update(data, {
-                where: {
-                    id: playingUser.id
+    async saveExistingUsers(...playingUsers: PlayingUser[]): Promise<void> {
+        await dbInstance.transaction(async (t) => 
+            {
+                for (const playingUser of playingUsers) {
+                    const data = PlayingUserModel.getModelDataFromDomainUser(playingUser)
+                    await PlayingUserModel.update(data, {
+                            where: {
+                                id: playingUser.id
+                            },
+                            transaction: t
+                        })
                 }
             })
     }

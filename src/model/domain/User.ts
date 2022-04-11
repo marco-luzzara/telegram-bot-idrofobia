@@ -109,10 +109,6 @@ export class AdminUser {
         previousNotIdle.target = firstNotIdle
     }
 
-    shuffleTargets(): void {
-
-    }
-
     private createRing(players: Iterable<PlayingUser>, initializeLastKill: boolean): void {
         let firstPlayer = undefined
         let previousPlayer = undefined
