@@ -1,25 +1,25 @@
 import { PlayingUser } from '../../model/domain/User'
 import { PlayingUserModel, UserModel } from '../model/UserModel'
-import IUserRepository from '../../model/interfaces/data/IUserRepository'
+import IUserRepository from './interfaces/IUserRepository'
 import TelegramId from '../../model/custom_types/TelegramId';
 import { Includeable } from 'sequelize/types';
 
 export default class UserRepository implements IUserRepository {
-    async findPlayerThatHasTarget(target: PlayingUser, nestedLevel: number): Promise<PlayingUserModel> {
-        return null
-    }
+    // async findPlayerThatHasTarget(target: PlayingUser, nestedLevel: number): Promise<PlayingUserModel> {
+    //     return null
+    // }
 
-    async getByTelegramId(telegramId: TelegramId, nestedLevel: number = 0): Promise<PlayingUserModel> {
+    async getUserByTelegramId(telegramId: TelegramId, nestedLevel: number = 0): Promise<PlayingUser> {
         const includeOption = this.createRecursiveIncludeOption(nestedLevel)
 
         const playingUserModel = await PlayingUserModel.findOne({
             where: {
                 telegramId: telegramId.toString()
             },
-            include: this.createRecursiveIncludeOption(nestedLevel)
+            include: includeOption
         })
 
-        return playingUserModel;
+        return playingUserModel?.getPlayingUser(nestedLevel) ?? null;
     }
 
     private createRecursiveIncludeOption(nestedLevel: number): Includeable {
@@ -39,7 +39,21 @@ export default class UserRepository implements IUserRepository {
             ] as Includeable
     }
 
-    async getAllUsers(): Promise<PlayingUserModel[]> {
-        return await PlayingUserModel.findAll()
+    async getAllUsers(): Promise<PlayingUser[]> {
+        return (await PlayingUserModel.findAll({
+                    include: {
+                        model: UserModel
+                    }
+                }
+            )).map(m => m.getPlayingUser())
+    }
+
+    async saveExistingUser(playingUser: PlayingUser): Promise<void> {
+        const data = PlayingUserModel.getModelDataFromDomainUser(playingUser)
+        await PlayingUserModel.update(data, {
+                where: {
+                    id: playingUser.id
+                }
+            })
     }
 }

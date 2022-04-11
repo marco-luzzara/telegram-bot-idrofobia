@@ -1,5 +1,6 @@
 {
     "Db": {
-        "connectionString": "sqlite::memory:"
+        "connectionString": "sqlite::memory:",
+        "logging": false
     }
 }

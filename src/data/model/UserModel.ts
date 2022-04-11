@@ -3,6 +3,7 @@ import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin,
     HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes, 
     InferCreationAttributes, Model, NonAttribute } from 'sequelize'
 import { createThrowingProxy } from '../../infrastructure/utilities/ProxyUtil'
+import KillCode from '../../model/custom_types/KillCode'
 import TelegramId from '../../model/custom_types/TelegramId'
 import UserInfo from '../../model/custom_types/UserInfo'
 import { PlayingUser } from '../../model/domain/User'
@@ -55,6 +56,7 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, InferCre
     declare telegramId: string
     declare lastKill: Date | null
     declare profilePictureUrl: string
+    declare killCode: string
 
     declare getUser: BelongsToGetAssociationMixin<UserModel>;
     declare setUser: BelongsToSetAssociationMixin<UserModel, number>;
@@ -72,14 +74,13 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, InferCre
                 userModel.surname, 
                 userModel.address, 
                 new URL(this.profilePictureUrl),
-                new TelegramId(this.telegramId)
+                new TelegramId(this.telegramId),
+                new KillCode(this.killCode)
             )
     }
 
     /**
      * converts a `PlayingUserModel` into the domain-specific `PlayingUser`.
-     * @param repo 
-     * @param playingUserModel 
      * @param nestedLevel it specifies the number of target the `PlayingUser` will need to 
      * traverse. For example, with `nestedLevel = 2`, the entity can access all the members of
      * `this.targetUser.targetUser`
@@ -89,10 +90,13 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, InferCre
         // if i try to access a target that i have not loaded with eager loading,
         // then it throws. in this way i must set in advance the number of targets 
         // i need to load
-        const userTarget = this.targetUser?.getPlayingUser(nestedLevel - 1) ?? createThrowingProxy<PlayingUser>()
+        const userTarget = this.targetUser === undefined ? 
+        createThrowingProxy<PlayingUser>() :
+            this.targetUser === null ? null :
+                this.targetUser.getPlayingUser(nestedLevel - 1)
         
         const userInfo = this.getUserInfo(this.user)
-        const playingUser = new PlayingUser( 
+        const playingUser = new PlayingUser(
             userInfo,
             userTarget,
             this.lastKill)
@@ -101,16 +105,29 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, InferCre
         return playingUser
     }
 
-    /**
-     * reflect the fields of `playingUser` into this instance. 
-     * Note: associations are ignored
-     * @param playingUser 
-     */
-    async updateFromPlayingUser(playingUser: PlayingUser): Promise<void> {
-        this.lastKill = playingUser.lastKill
-        await this.save()
-        if (!util.types.isProxy(playingUser.target))
-            await this.setTargetUser(playingUser.target?.id ?? null)
+    // /**
+    //  * reflect the fields of `playingUser` into this instance. 
+    //  * Note: associations are ignored
+    //  * @param playingUser 
+    //  */
+    // async updateFromPlayingUser(playingUser: PlayingUser): Promise<void> {
+    //     this.lastKill = playingUser.lastKill
+    //     await this.save()
+    //     if (!util.types.isProxy(playingUser.target))
+    //         await this.setTargetUser(playingUser.target?.id ?? null)
+    // }
+
+    static getModelDataFromDomainUser(playingUser: PlayingUser): any {
+        const localData = {
+            lastKill: playingUser.lastKill
+        }
+
+        return util.types.isProxy(playingUser.target) ? 
+            localData : 
+            { 
+                ...localData,
+                target: playingUser.target?.id ?? null
+            }
     }
 }
 
@@ -138,6 +155,11 @@ PlayingUserModel.init(
                     isUrl: true
                 },
                 field: 'profile_picture_url'
+            },
+            killCode: {
+                type: DataTypes.STRING,
+                allowNull: false,
+                field: 'kill_code'
             }
         },
         {   
