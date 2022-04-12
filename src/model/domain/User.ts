@@ -50,7 +50,7 @@ export class PlayingUser {
     }
 
     isWinner(): boolean {
-        return this.target === this
+        return !this.isDead() && this.target.id === this.id
     }
 
     isDead(): boolean {

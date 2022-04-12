@@ -30,8 +30,10 @@ function createFakeUser(
 function createRingOfPlayers(n: number): PlayingUser[] {
     const players = [...Array(n).keys()].map(i => createFakeUser({seed: i}))
 
-    for (let i = 0; i < n; i++)
+    for (let i = 0; i < n; i++) {
         players[i].target = players[(i + 1) % n]
+        players[i].id = i
+    }
     
     return players
 }
@@ -74,6 +76,14 @@ test('given a playing user, when he kills the 2nd-to-last player, he is the winn
     expect(isTargetKilled).toBeTruthy()
     expect(players[0].isWinner()).toBeTruthy()
     expect(players[1].isWinner()).toBeFalsy()
+});
+
+test(`given a playing user, when he is the winner and inserts his own killcode,
+    it throws because suicide is not allowed`, () => 
+{
+    const players = createRingOfPlayers(1)
+
+    expect(() => players[0].killTarget(generateKillCodeFromSeed(0))).toThrow()
 });
 
 test('given a playing user that is idle, when isIdle, return true', () => {
