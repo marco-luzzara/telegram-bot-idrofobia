@@ -6,10 +6,6 @@ import { Includeable } from 'sequelize/types';
 import { dbInstance } from '../DbConnectionUtils';
 
 export default class UserRepository implements IUserRepository {
-    // async findPlayerThatHasTarget(target: PlayingUser, nestedLevel: number): Promise<PlayingUserModel> {
-    //     return null
-    // }
-
     async getUserByTelegramId(telegramId: TelegramId, nestedLevel: number = 0): Promise<PlayingUser> {
         const includeOption = this.createRecursiveIncludeOption(nestedLevel)
 

@@ -3,11 +3,8 @@ import { seedDbWithRingOfNPlayers } from '../utils/factories/DbUserFactory'
 import IUserRepository from '../../src/data/repositories/interfaces/IUserRepository'
 import UserRepository from '../../src/data/repositories/UserRepository'
 import UserService from '../../src/services/UserService'
-import { generateTelegramIdFromSeed } from '../utils/factories/TelegramIdFactory'
 import { generateKillCodeFromSeed } from '../utils/factories/KillCodeFactory'
 import { DeadUserStatus, PlayingUserStatus, WinningUserStatus } from '../../src/services/dto/UserStatus'
-import { PlayingUser } from '../../src/model/domain/User'
-import UserInfo from '../../src/model/custom_types/UserInfo'
 
 beforeEach(async () => {
     await dbInstance.sync({ force: true })

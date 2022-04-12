@@ -1,13 +1,7 @@
-import { PlayingUserModel } from '../../model/UserModel'
 import TelegramId from '../../../model/custom_types/TelegramId'
 import { PlayingUser } from '../../../model/domain/User'
 
 export default interface IUserRepository {
-    /**
-     * Find the unique player that has `target` as his target
-     * @param target the target of the player to find
-     */
-    //findPlayerThatHasTarget(target: PlayingUser, nestedLevel: number): Promise<PlayingUserModel>
     /**
      * get a `PlayingUser` with the specified `telegramId`. the returned user is eagerly
      * loaded with as many targets as `nestedLevel`.

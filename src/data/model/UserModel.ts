@@ -105,18 +105,6 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, InferCre
         return playingUser
     }
 
-    // /**
-    //  * reflect the fields of `playingUser` into this instance. 
-    //  * Note: associations are ignored
-    //  * @param playingUser 
-    //  */
-    // async updateFromPlayingUser(playingUser: PlayingUser): Promise<void> {
-    //     this.lastKill = playingUser.lastKill
-    //     await this.save()
-    //     if (!util.types.isProxy(playingUser.target))
-    //         await this.setTargetUser(playingUser.target?.id ?? null)
-    // }
-
     static getModelDataFromDomainUser(playingUser: PlayingUser): any {
         const localData = {
             lastKill: playingUser.lastKill

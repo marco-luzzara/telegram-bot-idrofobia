@@ -1,4 +1,3 @@
-import { PlayingUserModel, UserModel } from '../../../src/data/model/UserModel'
 import UserRepository from '../../../src/data/repositories/UserRepository'
 import { dbInstance } from '../../../src/data/DbConnectionUtils'
 import IUserRepository from '../../../src/data/repositories/interfaces/IUserRepository'
