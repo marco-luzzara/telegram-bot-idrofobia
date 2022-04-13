@@ -1,5 +1,5 @@
 import TelegramId from '../../../model/custom_types/TelegramId'
-import { AdminUser } from '../../../model/domain/User'
+import AdminUser from '../../../model/domain/AdminUser'
 
 export default interface IAdminUserRepository {
     /**

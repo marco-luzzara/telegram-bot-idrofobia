@@ -1,8 +1,9 @@
 import { DataTypes, 
     InferAttributes, 
     InferCreationAttributes, Model } from 'sequelize'
-import { AdminUser } from '../../model/domain/User'
-import { dbInstance as sequelize } from '../DbConnectionUtils'
+    
+import AdminUser from '../../model/domain/AdminUser'
+import { dbInstance as sequelize } from '../DbConnection'
 
 export default class AdminUserModel extends Model<InferAttributes<AdminUserModel>, InferCreationAttributes<AdminUserModel>> {
     declare telegramId: string

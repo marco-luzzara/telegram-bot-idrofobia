@@ -1,5 +1,5 @@
-import { dbInstance } from '../../src/data/DbConnectionUtils'
-import { seedDbWithRingOfNPlayers } from '../utils/factories/DbUserFactory'
+import { dbInstance } from '../../src/data/DbConnection'
+import { seedDbWithRingOfNPlayers } from '../utils/factories/DbPlayingUserFactory'
 import IUserRepository from '../../src/data/repositories/interfaces/IUserRepository'
 import UserRepository from '../../src/data/repositories/UserRepository'
 import UserService from '../../src/services/UserService'

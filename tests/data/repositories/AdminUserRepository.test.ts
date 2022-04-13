@@ -1,4 +1,4 @@
-import { dbInstance } from '../../../src/data/DbConnectionUtils'
+import { dbInstance } from '../../../src/data/DbConnection'
 import { generateTelegramIdFromSeed } from '../../utils/factories/TelegramIdFactory'
 import { createFakeAdminUserDbObject } from '../../utils/factories/DbAdminUserFactory'
 import AdminUserRepository from '../../../src/data/repositories/AdminUserRepository'

@@ -1,4 +1,4 @@
-import { PlayingUser } from "../../model/domain/User";
+import PlayingUser from "../../model/domain/PlayingUser";
 
 export class PlayingUserStatus {
     readonly killCode: string

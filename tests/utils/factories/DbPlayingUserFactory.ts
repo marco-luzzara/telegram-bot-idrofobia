@@ -1,6 +1,6 @@
 import { PlayingUserModel, UserModel } from '../../../src/data/model/UserModel'
-import { generateTelegramIdFromSeed } from '../../utils/factories/TelegramIdFactory'
-import { generateKillCodeFromSeed } from '../../utils/factories/KillCodeFactory'
+import { generateTelegramIdFromSeed } from './TelegramIdFactory'
+import { generateKillCodeFromSeed } from './KillCodeFactory'
 
 export async function createFakePlayingUserDbObject(seed: string): Promise<PlayingUserModel> {
     const user = await UserModel.create(

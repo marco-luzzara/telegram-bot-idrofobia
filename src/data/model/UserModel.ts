@@ -2,14 +2,14 @@ import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin,
     BelongsToSetAssociationMixin, CreationOptional, DataTypes, 
     HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes, 
     InferCreationAttributes, Model, NonAttribute } from 'sequelize'
+const util = require('util')
+
 import { createThrowingProxy } from '../../infrastructure/utilities/ProxyUtil'
 import KillCode from '../../model/custom_types/KillCode'
 import TelegramId from '../../model/custom_types/TelegramId'
 import UserInfo from '../../model/custom_types/UserInfo'
-import { PlayingUser } from '../../model/domain/User'
-import { dbInstance as sequelize } from '../DbConnectionUtils'
-
-const util = require('util')
+import PlayingUser from '../../model/domain/PlayingUser'
+import { dbInstance as sequelize } from '../DbConnection'
 
 class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
     declare id: CreationOptional<number>

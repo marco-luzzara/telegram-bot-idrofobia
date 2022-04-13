@@ -1,9 +1,9 @@
-import { PlayingUser } from '../../model/domain/User'
+import PlayingUser from '../../model/domain/PlayingUser'
 import { PlayingUserModel, UserModel } from '../model/UserModel'
 import IUserRepository from './interfaces/IUserRepository'
 import TelegramId from '../../model/custom_types/TelegramId';
 import { Includeable } from 'sequelize/types';
-import { dbInstance } from '../DbConnectionUtils';
+import { dbInstance } from '../DbConnection';
 
 export default class UserRepository implements IUserRepository {
     async getUserByTelegramId(telegramId: TelegramId, nestedLevel: number = 0): Promise<PlayingUser> {

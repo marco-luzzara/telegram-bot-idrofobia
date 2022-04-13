@@ -1,9 +1,9 @@
 import UserRepository from '../../../src/data/repositories/UserRepository'
-import { dbInstance } from '../../../src/data/DbConnectionUtils'
+import { dbInstance } from '../../../src/data/DbConnection'
 import IUserRepository from '../../../src/data/repositories/interfaces/IUserRepository'
 import { generateTelegramIdFromSeed } from '../../utils/factories/TelegramIdFactory'
-import { createFakePlayingUserDbObject } from '../../utils/factories/DbUserFactory'
-import { seedDbWithRingOfNPlayers } from '../../utils/factories/DbUserFactory'
+import { createFakePlayingUserDbObject } from '../../utils/factories/DbPlayingUserFactory'
+import { seedDbWithRingOfNPlayers } from '../../utils/factories/DbPlayingUserFactory'
 
 beforeEach(async () => {
     await dbInstance.sync({ force: true })

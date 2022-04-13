@@ -1,5 +1,5 @@
-import { dbInstance } from '../../src/data/DbConnectionUtils'
-import { seedDbWithRingOfNPlayers } from '../utils/factories/DbUserFactory'
+import { dbInstance } from '../../src/data/DbConnection'
+import { seedDbWithRingOfNPlayers } from '../utils/factories/DbPlayingUserFactory'
 import IUserRepository from '../../src/data/repositories/interfaces/IUserRepository'
 import UserRepository from '../../src/data/repositories/UserRepository'
 import UserService from '../../src/services/UserService'
@@ -28,4 +28,44 @@ test(`given a playing user, when he tries to kill the target as an admin,
         generateTelegramIdFromSeed('user0').toString(), 
         generateTelegramIdFromSeed('user0').toString())).rejects.toThrowError(UnauthorizedError)
 });
+
+test(`given an admin user, when he kills the target manually, 
+    the target is killed and reassigned`, async () => 
+{
+    await seedDbWithRingOfNPlayers(3)
+    await createFakeAdminUserDbObject('a0')
+    const userTelegramId = generateTelegramIdFromSeed('user0')
+    const userRepo: IUserRepository = new UserRepository()
+    const adminRepo: IAdminUserRepository = new AdminUserRepository()
+    const service = new AdminUserService(userRepo, adminRepo)
+
+    await service.killUserTarget(
+        generateTelegramIdFromSeed('a0').toString(), 
+        userTelegramId.toString())
+
+    const user = await userRepo.getUserByTelegramId(userTelegramId, 1)
+    expect(user.target.userInfo.telegramId).toEqual(generateTelegramIdFromSeed('user2'))
+    const userKilled = await userRepo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
+    expect(userKilled.isDead()).toBeTruthy()
+});
+
+// test(`given an admin user, when he kills the winner manually, 
+//     nothing happens`, async () => 
+// {
+//     await seedDbWithRingOfNPlayers(1)
+//     await createFakeAdminUserDbObject('a0')
+//     const userTelegramId = generateTelegramIdFromSeed('user0')
+//     const userRepo: IUserRepository = new UserRepository()
+//     const adminRepo: IAdminUserRepository = new AdminUserRepository()
+//     const service = new AdminUserService(userRepo, adminRepo)
+
+//     await service.killUserTarget(
+//         generateTelegramIdFromSeed('a0').toString(), 
+//         userTelegramId.toString())
+
+//     const user = await userRepo.getUserByTelegramId(userTelegramId, 1)
+//     expect(user.target.userInfo.telegramId).toEqual(generateTelegramIdFromSeed('user2'))
+//     const userKilled = await userRepo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
+//     expect(userKilled.isDead()).toBeTruthy()
+// });
 

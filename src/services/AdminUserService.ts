@@ -1,11 +1,11 @@
+import * as timespan from "timespan"
+
 import TelegramId from '../model/custom_types/TelegramId';
 import IUserRepository from '../data/repositories/interfaces/IUserRepository'
 import KillCode from '../model/custom_types/KillCode';
 import { DeadUserStatus, PlayingUserStatus, WinningUserStatus } from './dto/UserStatus'
-import { PlayingUser } from '../model/domain/User';
+import PlayingUser from '../model/domain/PlayingUser';
 import IAdminUserRepository from '../data/repositories/interfaces/IAdminUserRepository';
-
-import * as timespan from "timespan"
 import UnauthorizedError from './errors/UnauthorizedError';
 
 /**
@@ -37,7 +37,8 @@ export default class AdminUserService {
                         if (adminUser === null)
                             throw new UnauthorizedError(adminTelegramId.toString(), 'Admin')
         
-                        return target(...argumentsList)
+                        const boundTarget = target.bind(thisService)
+                        return boundTarget(...argumentsList)
                     }
                 })
         }
@@ -48,6 +49,18 @@ export default class AdminUserService {
     }
 
     async killUserTarget(adminTelegramId: string, userTelegramId: string): Promise<void> {
+        const adminTId = new TelegramId(adminTelegramId)
+        const admin = await this.adminRepo.getAdminUserByTelegramId(adminTId)
+        const userTId = new TelegramId(userTelegramId)
+        const user = await this.userRepo.getUserByTelegramId(userTId, 2)
+        const killedUser = user.target
+
+        if (user.isWinner())
+            return
+
+        admin.killPlayerTarget(user)
+
+        await this.userRepo.saveExistingUsers(user, killedUser)
     }
 
     async killIdlePlayers(adminTelegramId: string, idleTimeSpan: timespan.TimeSpan): Promise<void> {

@@ -2,7 +2,7 @@ import TelegramId from '../model/custom_types/TelegramId';
 import IUserRepository from '../data/repositories/interfaces/IUserRepository'
 import KillCode from '../model/custom_types/KillCode';
 import { DeadUserStatus, PlayingUserStatus, WinningUserStatus } from './dto/UserStatus'
-import { PlayingUser } from '../model/domain/User';
+import PlayingUser from '../model/domain/PlayingUser';
 
 export default class UserService {
     private readonly repo: IUserRepository

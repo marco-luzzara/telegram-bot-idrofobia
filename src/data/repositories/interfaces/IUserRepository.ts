@@ -1,5 +1,5 @@
 import TelegramId from '../../../model/custom_types/TelegramId'
-import { PlayingUser } from '../../../model/domain/User'
+import PlayingUser from '../../../model/domain/PlayingUser'
 
 export default interface IUserRepository {
     /**
