@@ -4,6 +4,13 @@ import { strict as assert } from 'assert';
 import UserInfo from "../custom_types/UserInfo"
 import KillCode from "../custom_types/KillCode";
 
+export enum KillTargetResult {
+    KillTargetSuccessful,
+    WrongKillCode,
+    WinnerCannotKill,
+    DeadUserCannotKill
+}
+
 export default class PlayingUser {
     id: number
     readonly userInfo: UserInfo
@@ -20,13 +27,17 @@ export default class PlayingUser {
         this.lastKill = lastKill
     }
 
-    killTarget(killCode: KillCode): boolean {
+    killTarget(killCode: KillCode): KillTargetResult {
         assert(this.isPlaying(), 'The game has not been started yet')
-        assert(!this.isWinner(), 'There is no other player to kill but yourself')
-        assert(!this.isDead(), 'A dead player cannot kill anyone')
+
+        if (this.isWinner())
+            return KillTargetResult.WinnerCannotKill
+
+        if (this.isDead())
+            return KillTargetResult.DeadUserCannotKill
 
         if (!this.target.hasKillCode(killCode))
-            return false
+            return KillTargetResult.WrongKillCode
 
         const killedUser = this.target
         const killedUserTarget = killedUser.target
@@ -35,7 +46,7 @@ export default class PlayingUser {
         this.target = killedUserTarget
 
         this.lastKill = new Date()
-        return true
+        return KillTargetResult.KillTargetSuccessful
     }
 
     hasKillCode(killCode: KillCode): boolean {
@@ -50,10 +61,12 @@ export default class PlayingUser {
     }
 
     isWinner(): boolean {
+        assert(this.isPlaying(), `player ${this.id} cannot be the winner if it is not playing`)
         return !this.isDead() && this.target.id === this.id
     }
 
     isDead(): boolean {
+        assert(this.isPlaying(), `player ${this.id} cannot be dead if it is not playing`)
         return this.target === null
     }
 

@@ -27,6 +27,8 @@ export default class AdminUser {
      * @param idleTimeSpan the maximum amount of time a player can play without killing anyone
      */
     killIdlePlayers(players: Iterable<PlayingUser>, idleTimeSpan: timespan.TimeSpan): void {
+        // cannot do assert because the generator would be visited
+        // assert(players.every(p => p.isPlaying() && !p.isDead()), 'only playing users can be killed for being idle')
         let firstNotIdle = undefined
         let previousNotIdle = undefined
         const idleCheckTime = new Date()

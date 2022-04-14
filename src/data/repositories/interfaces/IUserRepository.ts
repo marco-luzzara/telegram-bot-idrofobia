@@ -3,8 +3,8 @@ import PlayingUser from '../../../model/domain/PlayingUser'
 
 export default interface IUserRepository {
     /**
-     * get a `PlayingUser` with the specified `telegramId`. the returned user is eagerly
-     * loaded with as many targets as `nestedLevel`.
+     * get a `PlayingUser` with the specified `telegramId`, or null if not found. 
+     * the returned user is eagerly loaded with as many targets as `nestedLevel`.
      * @param telegramId 
      * @param nestedLevel with a `nestedLevel = 2`, you can access fields inside user.target.target
      */

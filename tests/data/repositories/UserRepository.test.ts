@@ -5,13 +5,15 @@ import { generateTelegramIdFromSeed } from '../../utils/factories/TelegramIdFact
 import { createFakePlayingUserDbObject } from '../../utils/factories/DbPlayingUserFactory'
 import { seedDbWithRingOfNPlayers } from '../../utils/factories/DbPlayingUserFactory'
 
+let repo: IUserRepository = null
+
 beforeEach(async () => {
     await dbInstance.sync({ force: true })
+    repo = new UserRepository()
 });
 
 test('given a telegramId, when getUserByTelegramId, it returns the user associated to that id', async () => {
     await seedDbWithRingOfNPlayers(3)
-    const repo: IUserRepository = new UserRepository()
 
     const player = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user2'))
 
@@ -20,7 +22,6 @@ test('given a telegramId, when getUserByTelegramId, it returns the user associat
 
 test('given a telegramId, when getUserByTelegramId and id not exists, it returns null', async () => {
     await seedDbWithRingOfNPlayers(3)
-    const repo: IUserRepository = new UserRepository()
 
     const player = await repo.getUserByTelegramId(generateTelegramIdFromSeed('not_a_user'))
 
@@ -31,7 +32,6 @@ test(`given a telegramId, when getUserByTelegramId and I load many targets,
         then i can traverse them`, async () => 
 {
     await seedDbWithRingOfNPlayers(3)
-    const repo: IUserRepository = new UserRepository()
 
     const player = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 3)
 
@@ -43,7 +43,6 @@ test(`given a telegramId, when getUserByTelegramId and the target is null,
         then it returns null`, async () => 
 {
     await createFakePlayingUserDbObject('user1')
-    const repo: IUserRepository = new UserRepository()
 
     const player = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 2)
 
@@ -54,7 +53,6 @@ test(`given a telegramId, when getUserByTelegramId but i have not loaded enough 
         then it throws`, async () => 
 {
     await seedDbWithRingOfNPlayers(3)
-    const repo: IUserRepository = new UserRepository()
 
     const player = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
 
@@ -63,7 +61,6 @@ test(`given a telegramId, when getUserByTelegramId but i have not loaded enough 
 
 test('given a set of users, when getAllUsers, return all users', async () => {
     await seedDbWithRingOfNPlayers(3)
-    const repo: IUserRepository = new UserRepository()
 
     const retPlayers = await repo.getAllUsers()
 
@@ -72,7 +69,6 @@ test('given a set of users, when getAllUsers, return all users', async () => {
 
 test('given a user with a changed field, when i want to save it, it is persisted on data store', async () => {
     await createFakePlayingUserDbObject('user1')
-    const repo: IUserRepository = new UserRepository()
     const user = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'))
     
     user.lastKill = new Date(2000, 12, 1)
@@ -87,7 +83,6 @@ test(`given a user with a null target, when i want to reassign the target,
 {
     await createFakePlayingUserDbObject('user1')
     await createFakePlayingUserDbObject('user2')
-    const repo: IUserRepository = new UserRepository()
     const user1 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
     const user2 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user2'))
     
@@ -102,7 +97,6 @@ test(`given a user with a target, when i want to reassign the target to null,
     it is persisted on data store`, async () => 
 {
     await seedDbWithRingOfNPlayers(3)
-    const repo: IUserRepository = new UserRepository()
     const user1 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
     
     user1.target = null
@@ -115,7 +109,6 @@ test(`given a user with a target, when i want to reassign the target to null,
 test(`given many users, when i want to update all of them, i save all their data`, async () => 
 {
     await seedDbWithRingOfNPlayers(3)
-    const repo: IUserRepository = new UserRepository()
     const user1 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
     const user2 = user1.target
     

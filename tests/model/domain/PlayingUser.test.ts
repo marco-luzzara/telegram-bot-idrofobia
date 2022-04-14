@@ -2,7 +2,7 @@ import timespan from "timespan"
 import { setTimeout } from 'timers/promises';
 
 import { mock, MockProxy } from 'jest-mock-extended';
-import PlayingUser from '../../../src/model/domain/PlayingUser'
+import PlayingUser, { KillTargetResult } from '../../../src/model/domain/PlayingUser'
 import '../../utils/matchers/DateMatcher'
 import UserInfo from "../../../src/model/custom_types/UserInfo";
 import { generateTelegramIdFromSeed } from '../../utils/factories/TelegramIdFactory'
@@ -16,9 +16,9 @@ test(`given a playing user, when he kills the target with the correct code,
 
     // delay for the lastKill comparison 
     await setTimeout(2)
-    const isTargetKilled = players[0].killTarget(generateKillCodeFromSeed(1))
+    const targetKilledResult = players[0].killTarget(generateKillCodeFromSeed(1))
 
-    expect(isTargetKilled).toBeTruthy()
+    expect(targetKilledResult).toBe(KillTargetResult.KillTargetSuccessful)
     expect(players[0].target).toEqual(players[2])
     expect(players[0].lastKill).toBeAfter(originalLastKill)
     expect(players[1].isDead()).toBeTruthy()
@@ -31,30 +31,45 @@ test(`given a playing user, when he tries to kill the target with the wrong code
 
     // delay for the lastKill comparison 
     await setTimeout(2)
-    const isTargetKilled = players[0].killTarget(generateKillCodeFromSeed(0))
+    const targetKilledResult = players[0].killTarget(generateKillCodeFromSeed(0))
 
-    expect(isTargetKilled).toBeFalsy()
+    expect(targetKilledResult).toBe(KillTargetResult.WrongKillCode)
     expect(players[0].target).toEqual(players[1])
     expect(players[0].lastKill).toEqual(originalLastKill)
     expect(players[1].isDead()).toBeFalsy()
 });
 
+test(`given a winning user, when he tries to kill the target, 
+        he cannot because he is the winner`, async () => {
+    const players = createRingOfPlayers(1)
+
+    const targetKilledResult = players[0].killTarget(generateKillCodeFromSeed(0))
+
+    expect(targetKilledResult).toBe(KillTargetResult.WinnerCannotKill)
+    expect(players[0].isWinner()).toBeTruthy()
+    expect(players[0].isDead()).toBeFalsy()
+});
+
+test(`given a dead user, when he tries to kill the target, 
+        he cannot because he does not have any target`, async () => {
+    const players = createRingOfPlayers(2)
+    players[0].killTarget(generateKillCodeFromSeed(1))
+
+    const targetKilledResult = players[1].killTarget(generateKillCodeFromSeed(100)) // the killcode does not matter
+
+    expect(targetKilledResult).toBe(KillTargetResult.DeadUserCannotKill)
+    expect(players[1].isDead()).toBeTruthy()
+});
+
 test('given a playing user, when he kills the 2nd-to-last player, he is the winner', () => {
     const players = createRingOfPlayers(2)
 
-    const isTargetKilled = players[0].killTarget(generateKillCodeFromSeed(1))
+    const targetKilledResult = players[0].killTarget(generateKillCodeFromSeed(1))
 
-    expect(isTargetKilled).toBeTruthy()
+    expect(targetKilledResult).toBe(KillTargetResult.KillTargetSuccessful)
     expect(players[0].isWinner()).toBeTruthy()
     expect(players[1].isWinner()).toBeFalsy()
-});
-
-test(`given a playing user, when he is the winner and inserts his own killcode,
-    it throws because suicide is not allowed`, () => 
-{
-    const players = createRingOfPlayers(1)
-
-    expect(() => players[0].killTarget(generateKillCodeFromSeed(0))).toThrow()
+    expect(players[1].isDead()).toBeTruthy()
 });
 
 test('given a playing user that is idle, when isIdle, return true', () => {
