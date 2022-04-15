@@ -54,23 +54,37 @@ export default class UserService {
 
     /**
      * return the status of the current player, including his own kill code 
-     * and target info
+     * and target info if still playing
      * @param telegramId the telegram id of the player
      */
-    // async getUserStatus(telegramId: string): Promise<void> 
-    // {
-    //     const tId = new TelegramId(telegramId)
-    //     const user = await this.repo.getUserByTelegramId(tId, 1)
-    //     if (!this.isUserPlaying(user))
-    //         return
+    async getUserStatus(telegramId: string): Promise<void> 
+    {
+        const tId = new TelegramId(telegramId)
+        const user = await this.repo.getUserByTelegramId(tId, 1)
+        if (!(await this.isUserPlaying(user, telegramId)))
+            return
 
-    //     if (user.isDead())
-    //         return new DeadUserStatus()
-    //     else if (user.isWinner())
-    //         return new WinningUserStatus()
-    //     else 
-    //         return new PlayingUserStatus(user)
-    // }
+        if (user.isDead())
+            await this.notificationService.sendMessage(telegramId, NotificationMessages.UserStatusDead)     
+        else if (user.isWinner())
+            await this.notificationService.sendMessage(telegramId, NotificationMessages.UserStatusWinner)     
+        else 
+            await this.sendMessageForPlayingUser(telegramId, user)
+    }
+
+    private async sendMessageForPlayingUser(telegramId: string, user: PlayingUser): Promise<void> {
+        const target = user.target
+        await this.notificationService.sendMessage(telegramId, 
+            NotificationMessages.UserStatusPlaying, 
+            // params
+            user.userInfo.killCode.toString(),
+            user.lastKill.toUTCString())
+        await this.notificationService.sendPicture(telegramId, 
+            NotificationMessages.UserStatusTargetInfo, 
+            target.userInfo.profilePictureUrl, 
+            `${target.userInfo.name} ${target.userInfo.surname}`,
+            target.userInfo.address)
+    }
 
     private async isUserPlaying(user: PlayingUser, telegramId: string): Promise<boolean> {
         if (user === null) {

@@ -19,130 +19,166 @@ beforeEach(async () => {
     repo = new UserRepository()
 });
 
-test(`given a non-registered user, when it tries to kill a target, 
-    it cannot because he is not registered`, async () => 
-{
-    await seedDbWithRingOfNPlayers(3)
-    const notRegisteredTId = 'user4'
-    const service = new UserService(repo, mockNotificationService)
+describe('killUserTarget', () => {
+    test(`given a non-registered user, when it tries to kill a target, 
+        it cannot because he is not registered`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const notRegisteredTId = 'user4'
+        const service = new UserService(repo, mockNotificationService)
 
-    await service.killUserTarget(notRegisteredTId, 
-        generateKillCodeFromSeed('user10').toString())
+        await service.killUserTarget(notRegisteredTId, 
+            generateKillCodeFromSeed('user10').toString())
 
-    expect(mockNotificationService.sendMessage)
-        .toHaveBeenCalledWith(notRegisteredTId, NotificationMessages.UnregisteredUser)
-});
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(notRegisteredTId, NotificationMessages.UnregisteredUser)
+    });
 
-test(`given a non-playing user, when it tries to kill a target, 
-    it cannot because he is not playing`, async () => 
-{
-    await seedDbWithRingOfNPlayers(3)
-    const userTId = 'user0'
-    const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed(userTId))
-    user0.lastKill = null
-    expect(user0.isPlaying()).toBeFalsy()
-    await repo.saveExistingUsers(user0)
-    const service = new UserService(repo, mockNotificationService)
+    test(`given a non-playing user, when it tries to kill a target, 
+        it cannot because he is not playing`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const userTId = 'user0'
+        const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed(userTId))
+        user0.lastKill = null
+        expect(user0.isPlaying()).toBeFalsy()
+        await repo.saveExistingUsers(user0)
+        const service = new UserService(repo, mockNotificationService)
 
-    await service.killUserTarget(userTId, 
-        generateKillCodeFromSeed('user10').toString())
+        await service.killUserTarget(userTId, 
+            generateKillCodeFromSeed('user10').toString())
 
-    expect(mockNotificationService.sendMessage)
-        .toHaveBeenCalledWith(userTId, NotificationMessages.GameNotStartedYet)
-});
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(userTId, NotificationMessages.GameNotStartedYet)
+    });
 
-test(`given a dead user, when it tries to kill a target, 
-    it cannot because he is dead`, async () => 
-{
-    await seedDbWithRingOfNPlayers(3)
-    const deadUserTId = 'user1'
-    const service = new UserService(repo, mockNotificationService)
-    await service.killUserTarget('user0', 
-        generateKillCodeFromSeed(deadUserTId).toString())
+    test(`given a dead user, when it tries to kill a target, 
+        it cannot because he is dead`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const deadUserTId = 'user1'
+        const service = new UserService(repo, mockNotificationService)
+        await service.killUserTarget('user0', 
+            generateKillCodeFromSeed(deadUserTId).toString())
 
-    await service.killUserTarget(deadUserTId, 
-        generateKillCodeFromSeed('user2').toString())
+        await service.killUserTarget(deadUserTId, 
+            generateKillCodeFromSeed('user2').toString())
 
-    expect(mockNotificationService.sendMessage)
-        .toHaveBeenCalledWith(deadUserTId, NotificationMessages.DeadUserCannotKill)
-});
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(deadUserTId, NotificationMessages.DeadUserCannotKill)
+    });
 
-test(`given a winning user, when it tries to kill a target, 
-    it cannot because he is already the winner`, async () => 
-{
-    await seedDbWithRingOfNPlayers(1)
-    const winningUserTId = 'user0'
-    const service = new UserService(repo, mockNotificationService)
+    test(`given a winning user, when it tries to kill a target, 
+        it cannot because he is already the winner`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(1)
+        const winningUserTId = 'user0'
+        const service = new UserService(repo, mockNotificationService)
 
-    await service.killUserTarget(winningUserTId, 
-        generateKillCodeFromSeed(winningUserTId).toString())
+        await service.killUserTarget(winningUserTId, 
+            generateKillCodeFromSeed(winningUserTId).toString())
 
-    expect(mockNotificationService.sendMessage)
-        .toHaveBeenCalledWith(winningUserTId, NotificationMessages.WinnerCannotKill)
-});
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(winningUserTId, NotificationMessages.WinnerCannotKill)
+    });
 
-test(`given a playing user, when he kills the target with the right killcode, 
-    it receives a new target and the target is notified as well`, async () => 
-{
-    await seedDbWithRingOfNPlayers(3)
-    const service = new UserService(repo, mockNotificationService)
+    test(`given a playing user, when he kills the target with the right killcode, 
+        it receives a new target and the target is notified as well`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const service = new UserService(repo, mockNotificationService)
 
-    await service.killUserTarget('user1', 
-        generateKillCodeFromSeed('user2').toString())
+        await service.killUserTarget('user1', 
+            generateKillCodeFromSeed('user2').toString())
 
-    expect(mockNotificationService.sendMessage)
-        .toHaveBeenCalledWith('user1', NotificationMessages.KillTargetSuccessful)
-    expect(mockNotificationService.sendMessage)
-        .toHaveBeenCalledWith('user2', NotificationMessages.UserIsDead)
-});
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith('user1', NotificationMessages.KillTargetSuccessful)
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith('user2', NotificationMessages.UserIsDead)
+    });
 
-test(`given a playing user, when the killcode he inserts to kill the target is wrong, 
-        he is notified that he did not kill the target`, async () => 
-{
-    await seedDbWithRingOfNPlayers(3)
-    const service = new UserService(repo, mockNotificationService)
+    test(`given a playing user, when the killcode he inserts to kill the target is wrong, 
+            he is notified that he did not kill the target`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const service = new UserService(repo, mockNotificationService)
 
-    await service.killUserTarget('user1', 
-        generateKillCodeFromSeed('badkillcode').toString())
+        await service.killUserTarget('user1', 
+            generateKillCodeFromSeed('badkillcode').toString())
 
-    expect(mockNotificationService.sendMessage)
-        .toHaveBeenCalledWith('user1', NotificationMessages.WrongKillCode)
-});
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith('user1', NotificationMessages.WrongKillCode)
+    });
+})
 
-// test(`given a playing user, when he asks for the status, 
-//     (killcode, lastkill, target info) are returned`, async () => 
-// {
-//     await seedDbWithRingOfNPlayers(3)
-//     const repo: IUserRepository = new UserRepository()
-//     const service = new UserService(repo)
+describe('getUserStatus', () => {
+    test(`given a non-registered user, when he tries to kill a target, 
+        he cannot because not registered`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const notRegisteredTId = 'user4'
+        const service = new UserService(repo, mockNotificationService)
 
-//     const userStatus = await service.getUserStatus('user1') as PlayingUserStatus
+        await service.getUserStatus(notRegisteredTId)
 
-//     expect(userStatus.killCode).toBe(generateKillCodeFromSeed('user1').toString())
-//     expect(userStatus.targetAddress).toBe('user2')
-//     expect(userStatus.targetFullname).toBe('user2 user2')
-//     expect(userStatus.targetPhotoUrl).toBe('http://myphoto-user2.com/')
-// });
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(notRegisteredTId, NotificationMessages.UnregisteredUser)
+    });
 
-// test(`given a dead user, when he asks for the status, it receives a DeadUser`, async () => 
-// {
-//     await seedDbWithRingOfNPlayers(2)
-//     const repo: IUserRepository = new UserRepository()
-//     const service = new UserService(repo)
-//     await service.killUserTarget('user0', generateKillCodeFromSeed('user1').toString())
-//     const userStatus = await service.getUserStatus('user1')
+    test(`given a non-playing user, when he tries to kill a target, 
+        he cannot because not playing`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const userTId = 'user0'
+        const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed(userTId))
+        user0.lastKill = null
+        expect(user0.isPlaying()).toBeFalsy()
+        await repo.saveExistingUsers(user0)
+        const service = new UserService(repo, mockNotificationService)
 
-//     expect(userStatus).toBeInstanceOf(DeadUserStatus)
-// });
+        await service.getUserStatus(userTId)
 
-// test(`given a winning user, when he asks for the status, 
-//     it receives a WinningUser`, async () => 
-// {
-//     await seedDbWithRingOfNPlayers(1)
-//     const repo: IUserRepository = new UserRepository()
-//     const service = new UserService(repo)
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(userTId, NotificationMessages.GameNotStartedYet)
+    });
 
-//     const userStatus = await service.getUserStatus('user0')
+    test(`given a playing user, when he asks for the status, 
+        he receives messages containing lastKill, kill code and target info`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(3)
+        const service = new UserService(repo, mockNotificationService)
 
-//     expect(userStatus).toBeInstanceOf(WinningUserStatus)
-// });
+        await service.getUserStatus('user1')
+
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith('user1', NotificationMessages.UserStatusPlaying,
+                expect.anything(), expect.anything())
+        expect(mockNotificationService.sendPicture)
+            .toHaveBeenCalledWith('user1', NotificationMessages.UserStatusTargetInfo,
+                expect.anything(), expect.anything(), expect.anything())
+    });
+
+    test(`given a dead user, when he asks for the status, it receives a DeadUser status`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(2)
+        const service = new UserService(repo, mockNotificationService)
+        await service.killUserTarget('user0', generateKillCodeFromSeed('user1').toString())
+
+        await service.getUserStatus('user1')
+
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith('user1', NotificationMessages.UserStatusDead)
+    });
+
+    test(`given a winning user, when he asks for the status, 
+        it receives a WinningUser`, async () => 
+    {
+        await seedDbWithRingOfNPlayers(1)
+        const service = new UserService(repo, mockNotificationService)
+
+        await service.getUserStatus('user0')
+
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith('user0', NotificationMessages.UserStatusWinner)
+    });
+})

@@ -6,7 +6,11 @@ const enum NotificationMessages {
     UnregisteredUser = 'UnregisteredUser',
     WinnerCannotKill = 'WinnerCannotKill',
     DeadUserCannotKill = 'DeadUserCannotKill',
-    WrongKillCode = 'WrongKillCode'
+    WrongKillCode = 'WrongKillCode',
+    UserStatusDead = 'UserStatusDead',
+    UserStatusWinner = 'UserStatusWinner',
+    UserStatusPlaying = 'UserStatusPlaying',
+    UserStatusTargetInfo = 'UserStatusTargetInfo'
 }
 
 export default NotificationMessages
