@@ -49,12 +49,17 @@ export default class PlayingUser {
         return KillTargetResult.KillTargetSuccessful
     }
 
+    die() {
+        assert(!this.isDead(), 'user cannot die twice')
+        this.target = null
+    }
+
     hasKillCode(killCode: KillCode): boolean {
         return killCode.toString() === this.userInfo.killCode.toString()
     }
 
     isIdle(now: Date, idleTimeSpan: timespan.TimeSpan): boolean {
-        assert(this.isPlaying(), `player ${this.id} cannot be idle if it is not playing`)
+        assert(!this.isDead(), `player ${this.id} cannot be idle if it is not playing`)
 
         const playerIdleTime = timespan.fromDates(this.lastKill, now)
         return playerIdleTime.totalSeconds() > idleTimeSpan.totalSeconds()

@@ -13,7 +13,19 @@ export default interface IUserRepository {
     /**
      * returns all users, both those who are playing and the ones who are not
      */
-    getAllUsers(): Promise<PlayingUser[]>
+    getAllUsers(): AsyncGenerator<PlayingUser, any, undefined>;
+
+    /**
+     * returns all users that are also alive
+     */
+    getAllLivingUsers(): AsyncGenerator<PlayingUser, any, undefined>;
+
+    /**
+     * retrieve the user given the telegram id of his target. null if the telegram id 
+     * is not found or if the user is alread dead
+     * @param telegramId 
+     */
+    getUserFromTargetTId(telegramId: TelegramId, nestedLevel: number): Promise<PlayingUser>;
 
     /**
      * save an existing user and the loaded associations. for example, if target is

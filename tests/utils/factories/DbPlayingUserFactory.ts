@@ -14,7 +14,7 @@ export async function createFakePlayingUserDbObject(seed: string): Promise<Playi
             {
                 id: user.id,
                 telegramId: generateTelegramIdFromSeed(seed).toString(),
-                lastKill: new Date(),
+                lastKill: null,
                 profilePictureUrl: `http://myphoto-${seed}.com/`,
                 killCode: generateKillCodeFromSeed(seed).toString()
             }
@@ -30,8 +30,10 @@ export async function seedDbWithRingOfNPlayers(numPlayers: number): Promise<Play
         players.push(await createFakePlayingUserDbObject('user' + i))
     }
 
-    for (let i = 0; i < numPlayers; i++)
+    for (let i = 0; i < numPlayers; i++) {
+        await players[i].update({ lastKill: new Date() })
         await players[i].setTargetUser(players[(i + 1) % numPlayers])
+    }
 
     return players
 }

@@ -1,7 +1,6 @@
 import TelegramId from '../model/custom_types/TelegramId';
 import IUserRepository from '../data/repositories/interfaces/IUserRepository'
 import KillCode from '../model/custom_types/KillCode';
-import { DeadUserStatus, PlayingUserStatus, WinningUserStatus } from './dto/UserStatus'
 import PlayingUser, { KillTargetResult } from '../model/domain/PlayingUser';
 import INotificationService from './notification/INotificationService'
 import NotificationMessages from './notification/NotificationMessages'
@@ -16,7 +15,7 @@ export default class UserService {
     }
 
     /**
-     * the user (identified by `telegramId`) is trying to kill his target
+     * the user identified by `telegramId` is trying to kill his target
      * @param telegramId the telegram id of the user whose target must be killed
      * @param killCode the kill code of the target
      */
@@ -49,7 +48,10 @@ export default class UserService {
             case KillTargetResult.WrongKillCode:
                 await this.notificationService.sendMessage(telegramId, NotificationMessages.WrongKillCode)     
                 break
-        }            
+            default:
+                throw new Error(`killUserTarget from user ${telegramId} returned an unexpected value: 
+                KillTargetResult.${KillTargetResult[killTargetResult]}`)
+        }
     }
 
     /**
@@ -69,10 +71,10 @@ export default class UserService {
         else if (user.isWinner())
             await this.notificationService.sendMessage(telegramId, NotificationMessages.UserStatusWinner)     
         else 
-            await this.sendMessageForPlayingUser(telegramId, user)
+            await this.sendStatusMessageForPlayingUser(telegramId, user)
     }
 
-    private async sendMessageForPlayingUser(telegramId: string, user: PlayingUser): Promise<void> {
+    private async sendStatusMessageForPlayingUser(telegramId: string, user: PlayingUser): Promise<void> {
         const target = user.target
         await this.notificationService.sendMessage(telegramId, 
             NotificationMessages.UserStatusPlaying, 
@@ -98,16 +100,5 @@ export default class UserService {
         }
 
         return true
-    }
-
-    /**
-     * returns whether the user identified by `telegramId` is the winner
-     * @param telegramId 
-     */
-    async isWinner(telegramId: string): Promise<boolean> {
-        const tId = new TelegramId(telegramId)
-        const user = await this.repo.getUserByTelegramId(tId, 1)
-
-        return user.isWinner()
     }
 }

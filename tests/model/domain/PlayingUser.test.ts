@@ -73,7 +73,8 @@ test('given a playing user, when he kills the 2nd-to-last player, he is the winn
 });
 
 test('given a playing user that is idle, when isIdle, return true', () => {
-    const user = createFakeUser({seed: 1, lastKill: new Date(2020, 1, 1, 12, 0, 0, 0)})
+    const target = createFakeUser({seed: 0})
+    const user = createFakeUser({seed: 1, lastKill: new Date(2020, 1, 1, 12, 0, 0, 0), target})
 
     const isIdle = user.isIdle(
         new Date(2020, 1, 1, 13, 0, 0, 0), 
@@ -83,7 +84,8 @@ test('given a playing user that is idle, when isIdle, return true', () => {
 })
 
 test('given a playing user that is not idle, when isIdle, return false', () => {
-    const user = createFakeUser({seed: 1, lastKill: new Date(2020, 1, 1, 12, 0, 0, 0)})
+    const target = createFakeUser({seed: 0})
+    const user = createFakeUser({seed: 1, lastKill: new Date(2020, 1, 1, 12, 0, 0, 0), target})
 
     const isIdle = user.isIdle(
         new Date(2020, 1, 1, 13, 0, 0, 0), 

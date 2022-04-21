@@ -1,6 +1,8 @@
 const enum NotificationMessages {
     KillTargetSuccessful = 'KillTargetSuccessful',
+    GameStarted = 'GameStarted',
     UserIsDead = 'UserIsDead',
+    UserIsDeadBecauseOfIdleness = 'UserIsDeadBecauseOfIdleness',
     // errors
     GameNotStartedYet = 'GameNotStartedYet',
     UnregisteredUser = 'UnregisteredUser',
@@ -10,7 +12,12 @@ const enum NotificationMessages {
     UserStatusDead = 'UserStatusDead',
     UserStatusWinner = 'UserStatusWinner',
     UserStatusPlaying = 'UserStatusPlaying',
-    UserStatusTargetInfo = 'UserStatusTargetInfo'
+    UserStatusTargetInfo = 'UserStatusTargetInfo',
+
+    // admin
+    AskToUserForKillResult = 'AskToUserForKillResult',
+    GameStartedSuccessfully = 'GameStartedSuccessfully',
+    IdleUsersKilledSuccessfully = 'IdleUsersKilledSuccessfully'
 }
 
 export default NotificationMessages
