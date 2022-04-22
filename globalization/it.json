@@ -1,0 +1,13 @@
+{
+    "responses": {
+        "StartMessage": "Benvenuto sul bot di Idrofobia",
+        "HelpMessage": "Qua ti spiego come funziona e cosa puoi fare"
+    },
+    "commandDescriptions": {
+        "kill_target": "Uccidi il tuo target usando il suo kill code",
+        "get_status": "Chiedi il tuo kill code e le informazioni sul tuo target",
+        "kill_idle_players": "Uccidi tutti i giocatori che sono inattivi",
+        "kill_user": "Uccidi un giocatore",
+        "start_game": "Fai cominciare la partita"
+    }
+}

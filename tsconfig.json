@@ -4,11 +4,14 @@
         "checkJs": true,
         "esModuleInterop": true,
         "moduleResolution": "node",
+        "resolveJsonModule": true,
         "rootDir": ".",
         "noEmitOnError": true,
         "target": "ES2015",
         "outDir": "out",
+        "sourceMap": true,
+        "module": "CommonJS"
     },
-    "include": ["src/", "tests/"],
+    "include": ["src/", "index.ts", "globalization/*.json"],
     "exclude": ["node_modules", "**/*.spec.ts"]
 }

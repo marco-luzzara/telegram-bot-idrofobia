@@ -3,7 +3,6 @@ import * as timespan from "timespan"
 import TelegramId from '../model/custom_types/TelegramId';
 import IUserRepository from '../data/repositories/interfaces/IUserRepository'
 import PlayingUser from '../model/domain/PlayingUser';
-import IAdminUserRepository from '../data/repositories/interfaces/IAdminUserRepository';
 import INotificationService from "./notification/INotificationService";
 import UserService from "./UserService";
 import NotificationMessages from "./notification/NotificationMessages";
@@ -16,7 +15,6 @@ import NotificationMessages from "./notification/NotificationMessages";
  */
 export default class AdminUserService {
     private readonly userRepo: IUserRepository
-    private readonly adminRepo: IAdminUserRepository
 
     private readonly notificationService: INotificationService
     private readonly userService: UserService

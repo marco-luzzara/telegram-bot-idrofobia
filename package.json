@@ -11,9 +11,8 @@
     "timespan": "^2.3.0"
   },
   "scripts": {
-    "compile": "npx tsc",
-    "prestart": "npm run compile",
-    "start": "node out/index.js",
+    "prestart": "npx tsc",
+    "start": "NODE_ENV=production node out/index.js",
     "test": "jest tests/model tests/data",
     "integration_test": "./scripts/run_integration_tests.sh"
   },
