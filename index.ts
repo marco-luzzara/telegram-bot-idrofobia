@@ -1,14 +1,11 @@
-import { Context, Telegraf } from 'telegraf'
+import { Scenes, session, Telegraf } from 'telegraf'
 import * as config from 'config'
 import { Messages } from './src/infrastructure/utilities/GlobalizationUtil';
 import { initializeBotCommands, injectErrorHandler } from './src/app/BotInitializer';
-import { TelegramNotificationService } from './src/services/notification/TelegramNotificationService';
-import UserService from './src/services/UserService';
-import UserRepository from './src/data/repositories/UserRepository';
-import AdminUserService from './src/services/AdminUserService';
-import KillCodeKeyboard from './src/app/keyboards/KillCodeKeyboard'
+import AppContext from './src/app/types/AppContext'
+import killTargetScene from './src/app/scenes/KillTargetScene'
 
-const bot = new Telegraf(config.Bot.token)
+const bot = new Telegraf<AppContext>(config.Bot.token)
 const commands = initializeBotCommands(bot)
 
 bot.start((ctx) => {
@@ -19,19 +16,12 @@ bot.help((ctx) => {
     ctx.reply(Messages.responses.helpMessage)
 });
 
+const stage = new Scenes.Stage<AppContext>([killTargetScene])
+bot.use(session())
+bot.use(stage.middleware())
+
 bot.command(commands.killTargetCommand.command, async (ctx) => {
-    const service = getUserService(ctx)
-
-    const message = await ctx.reply(Messages.responses.requestForTargetKillCode, 
-        {
-            reply_markup: {
-                inline_keyboard: KillCodeKeyboard                
-            }
-        })
-
-    console.log(message.text)
-
-    //await service.killUserTarget(ctx.from.username)
+    await ctx.scene.enter(killTargetScene.id)
 });
 
 injectErrorHandler(bot)
@@ -40,17 +30,3 @@ bot.launch()
 
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
-
-function getUserService(ctx: Context) {
-    const userRepo = new UserRepository()
-    const notificationService = new TelegramNotificationService(ctx)
-
-    return new UserService(userRepo, notificationService)
-}
-
-function getAdminUserService(ctx: Context) {
-    const userRepo = new UserRepository()
-    const notificationService = new TelegramNotificationService(ctx)
-
-    return new AdminUserService(userRepo, notificationService)
-}

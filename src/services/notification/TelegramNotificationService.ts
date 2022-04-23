@@ -3,7 +3,7 @@ import NotificationMessages from "./NotificationMessages";
 import { Context } from "telegraf";
 import { getFormattedMessage, Messages } from '../../infrastructure/utilities/GlobalizationUtil'
 
-export class TelegramNotificationService implements INotificationService {
+export default class TelegramNotificationService implements INotificationService {
     private readonly ctx: Context
     
     constructor(ctx: Context) {
