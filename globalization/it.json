@@ -1,7 +1,8 @@
 {
     "responses": {
-        "StartMessage": "Benvenuto sul bot di Idrofobia",
-        "HelpMessage": "Qua ti spiego come funziona e cosa puoi fare"
+        "startMessage": "Benvenuto sul bot di Idrofobia",
+        "helpMessage": "Qua ti spiego come funziona e cosa puoi fare",
+        "requestForTargetKillCode": "Ora inserisci il kill code che il tuo target ti ha dato"
     },
     "commandDescriptions": {
         "kill_target": "Uccidi il tuo target usando il suo kill code",
@@ -9,5 +10,11 @@
         "kill_idle_players": "Uccidi tutti i giocatori che sono inattivi",
         "kill_user": "Uccidi un giocatore",
         "start_game": "Fai cominciare la partita"
+    },
+    "errors": {
+        "wrongKillCodeFormat": "Il kill code che hai inserito non è corretto. Deve contenere 10 caratteri tra lettere maiuscole e cifre"
+    },
+    "notifications": {
+
     }
 }

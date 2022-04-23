@@ -4,7 +4,6 @@ import IUserRepository from '../../src/data/repositories/interfaces/IUserReposit
 import UserRepository from '../../src/data/repositories/UserRepository'
 import UserService from '../../src/services/UserService'
 import { generateKillCodeFromSeed } from '../utils/factories/KillCodeFactory'
-import { DeadUserStatus, PlayingUserStatus, WinningUserStatus } from '../../src/services/dto/UserStatus'
 import { generateTelegramIdFromSeed } from '../utils/factories/TelegramIdFactory'
 import { mock } from 'jest-mock-extended'
 import INotificationService from '../../src/services/notification/INotificationService'

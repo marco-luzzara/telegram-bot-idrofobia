@@ -2,8 +2,9 @@ import { Telegraf } from "telegraf";
 import { BotCommand } from "telegraf/typings/core/types/typegram";
 import { Messages } from "../infrastructure/utilities/GlobalizationUtil";
 import * as config from 'config'
+import ValidationError from "../infrastructure/errors/ValidationError";
 
-export function initializeBot(bot: Telegraf): void {
+export function initializeBotCommands(bot: Telegraf): { [key: string]: BotCommand } {
     const killTargetCommand: BotCommand = {
         command: 'kill_target',
         description: Messages.commandDescriptions.kill_target
@@ -43,4 +44,25 @@ export function initializeBot(bot: Telegraf): void {
                 chat_id: config.Bot.adminGroupId
             }
         })
+
+    return {
+        killTargetCommand,
+        getStatusCommand,
+        
+        // admin only
+        killIdlePlayersCommand,
+        killUserCommand,
+        startGameCommand
+    }
+}
+
+export function injectErrorHandler(bot: Telegraf): Telegraf {
+    bot.catch(async (err: Error, ctx) => {
+        if (err instanceof ValidationError)
+            await ctx.reply(err.message)
+        else
+            await ctx.telegram.sendMessage(config.Bot.adminGroupId, err.message)
+    })
+
+    return bot
 }

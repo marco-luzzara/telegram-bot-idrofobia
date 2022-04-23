@@ -7,48 +7,18 @@ import INotificationService from "./notification/INotificationService";
 import UserService from "./UserService";
 import NotificationMessages from "./notification/NotificationMessages";
 
-/**
- * Note: `AdminUserService` returns a `Proxy` instance that takes care of 
- * the requests that needs authorization. The assumptions are:
- * - the methods to authorize should be added to `authorizedMethods`
- * - the first argument of a method to authorize is the telegramId
- */
 export default class AdminUserService {
     private readonly userRepo: IUserRepository
 
     private readonly notificationService: INotificationService
     private readonly userService: UserService
 
-    // private readonly authorizedMethods = [
-    //     this.startGame,
-    //     this.killUserTarget,
-    //     this.killIdlePlayers
-    // ].map(f => f.name)
-
     constructor(userRepo: IUserRepository/*, adminRepo: IAdminUserRepository*/, 
         notificationService: INotificationService) 
     {
         this.userRepo = userRepo
-        //this.adminRepo = adminRepo
         this.notificationService = notificationService
         this.userService = new UserService(this.userRepo, this.notificationService)
-
-        // const thisService = this
-
-        // for (const authorizedMethod of this.authorizedMethods) {
-        //     this[authorizedMethod] = new Proxy(this[authorizedMethod], {
-        //             apply: async function(target: any, thisArg, argumentsList) {
-        //                 // I am assuming the first parameter is the telegram id of the caller
-        //                 const adminTelegramId = new TelegramId(argumentsList[0])
-        //                 const adminUser = await thisService.adminRepo.getAdminUserByTelegramId(adminTelegramId)
-        //                 if (adminUser === null)
-        //                     throw new UnauthorizedError(adminTelegramId.toString(), 'Admin')
-        
-        //                 const boundTarget = target.bind(thisService)
-        //                 return boundTarget(...argumentsList)
-        //             }
-        //         })
-        // }
     }
 
     /**

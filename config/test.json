@@ -2,5 +2,11 @@
     "Db": {
         "connectionString": "sqlite::memory:",
         "logging": false
+    },
+    "Bot": {
+        "token": "test_token",
+        "id": "bot",
+        "adminGroupId": 100000000,
+        "language": "it"
     }
 }
