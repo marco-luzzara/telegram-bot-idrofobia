@@ -2,7 +2,9 @@
     "responses": {
         "startMessage": "Benvenuto sul bot di Idrofobia",
         "helpMessage": "Qua ti spiego come funziona e cosa puoi fare",
-        "requestForTargetKillCode": "Ora inserisci il kill code che il tuo target ti ha dato"
+        "requestForTargetKillCode": "Ora inserisci il kill code che il tuo target ti ha dato",
+        "requestForTimespan": "Inserisci il tempo massimo di inattività utilizzando il formato dd:hh:mm. Per esempio 02:03:04 sta per 2 giorni, 3 ore e 4 minuti",
+        "confirmIdlePlayersKill": "Per confermare l'uccisione dei giocatori inattivi per un tempo di (Giorni: %d, Ore: %d, Minuti: %d), clicca qui sotto"
     },
     "commandDescriptions": {
         "kill_target": "Uccidi il tuo target usando il suo kill code",
@@ -12,7 +14,8 @@
         "start_game": "Fai cominciare la partita"
     },
     "errors": {
-        "wrongKillCodeFormat": "Il kill code che hai inserito non è corretto. Deve contenere 10 caratteri tra lettere maiuscole e cifre"
+        "wrongKillCodeFormat": "Il kill code che hai inserito non è corretto. Deve contenere 10 caratteri tra lettere maiuscole e cifre",
+        "wrongTimespanFormat": "Formato errato (dd:hh:mm)"
     },
     "notifications": {
 

@@ -1,6 +1,6 @@
 import { Scenes } from "telegraf";
 import AppContext from "../types/AppContext";
-import { getUserService, getAdminUserService } from '../factories/ServiceFactory'
+import { getUserService } from '../factories/ServiceFactory'
 import { Messages } from "../../infrastructure/utilities/GlobalizationUtil";
 
 const KILL_TARGET_SCENE = 'KILL_TARGET_SCENE'
