@@ -1,17 +1,25 @@
 {
+    "ts-node": {
+        "moduleTypes": {
+            "jest.config.ts": "cjs"
+        }
+    },
     "compilerOptions": {
         "allowJs": true,
-        "checkJs": true,
+        "skipLibCheck": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+        "lib": ["ES2021"],
+        "module": "ESNext",
         "esModuleInterop": true,
         "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "rootDir": ".",
-        "noEmitOnError": true,
-        "target": "ES2015",
+        "target": "ESNext",
         "outDir": "out",
-        "sourceMap": true,
-        "module": "CommonJS"
+        "resolveJsonModule": true,
+        "noEmitOnError": true
     },
+    "compileOnSave": true,
     "include": ["src/", "index.ts", "globalization/*.json"],
     "exclude": ["node_modules", "**/*.spec.ts"]
 }

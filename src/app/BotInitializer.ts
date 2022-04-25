@@ -1,10 +1,10 @@
 import { Telegraf } from "telegraf";
 import { BotCommand } from "telegraf/typings/core/types/typegram";
 import { Messages } from "../infrastructure/utilities/GlobalizationUtil";
-import * as config from 'config'
+import config from 'config'
 import ValidationError from "../infrastructure/errors/ValidationError";
 
-export function initializeBotCommands(bot: Telegraf): { [key: string]: BotCommand } {
+export async function initializeBotCommands(bot: Telegraf): Promise<{ [key: string]: BotCommand }> {
     const killTargetCommand: BotCommand = {
         command: 'kill_target',
         description: Messages.commandDescriptions.kill_target
@@ -15,7 +15,7 @@ export function initializeBotCommands(bot: Telegraf): { [key: string]: BotComman
         description: Messages.commandDescriptions.get_status
     }
     
-    bot.telegram.setMyCommands([killTargetCommand, getStatusCommand], 
+    await bot.telegram.setMyCommands([killTargetCommand, getStatusCommand], 
         { 
             scope: { 
                 type: "all_private_chats" 
@@ -37,7 +37,7 @@ export function initializeBotCommands(bot: Telegraf): { [key: string]: BotComman
         description: Messages.commandDescriptions.start_game
     }
 
-    bot.telegram.setMyCommands([killIdlePlayersCommand, killUserCommand, startGameCommand], 
+    await bot.telegram.setMyCommands([killIdlePlayersCommand, killUserCommand, startGameCommand], 
         { 
             scope: { 
                 type: "chat_administrators",

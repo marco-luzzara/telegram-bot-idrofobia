@@ -4,7 +4,8 @@ import PlayingUser from '../../model/domain/PlayingUser'
 import { PlayingUserModel, UserModel } from '../model/UserModel'
 import IUserRepository from './interfaces/IUserRepository'
 import TelegramId from '../../model/custom_types/TelegramId';
-import { FindOptions, Includeable, Op } from 'sequelize';
+import Sequelize from 'sequelize';
+const { Op } = Sequelize
 import { dbInstance } from '../DbConnection';
 
 export default class UserRepository implements IUserRepository {
@@ -96,7 +97,7 @@ export default class UserRepository implements IUserRepository {
         } while (players.length > 0)
     }
 
-    private createRecursiveIncludeOption(nestedLevel: number): Includeable {
+    private createRecursiveIncludeOption(nestedLevel: number): Sequelize.Includeable {
         return nestedLevel == 0 ? 
             {
                 model: UserModel
@@ -110,6 +111,6 @@ export default class UserRepository implements IUserRepository {
                     as: 'targetUser',
                     include: this.createRecursiveIncludeOption(nestedLevel - 1)
                 }
-            ] as Includeable
+            ] as Sequelize.Includeable
     }
 }

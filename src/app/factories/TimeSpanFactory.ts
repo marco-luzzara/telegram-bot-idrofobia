@@ -1,6 +1,5 @@
 import * as timespan from "timespan"
 import ValidationError from '../../infrastructure/errors/ValidationError'
-import { Messages } from '../../infrastructure/utilities/GlobalizationUtil'
 
 const timespanRegex = /^(\d{1,2}):(\d{1,2}):(\d{1,2})$/
 

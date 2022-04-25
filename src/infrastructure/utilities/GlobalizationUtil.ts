@@ -1,8 +1,12 @@
-import * as config from 'config'
+import config from 'config'
+import { assert } from 'console'
 import { format } from 'util'
 
-const language: string = config.Bot.language
-const messages = require(`../../../globalization/${language}.json`)
+const language = config.Bot.language
+const { default: messages } = await import(`../../../globalization/${language}.json`, 
+    {
+        assert: { type: 'json' }
+    })
 
 export function getFormattedMessage(section: string, messageId: string, 
     ...params: string[]): string 

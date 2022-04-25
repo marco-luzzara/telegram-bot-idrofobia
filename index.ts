@@ -1,5 +1,5 @@
 import { Scenes, session, Telegraf } from 'telegraf'
-import * as config from 'config'
+import config from 'config'
 import { Messages } from './src/infrastructure/utilities/GlobalizationUtil';
 import { initializeBotCommands, injectErrorHandler } from './src/app/BotInitializer';
 import AppContext from './src/app/types/AppContext'
@@ -8,7 +8,7 @@ import killIdlePlayersScene from './src/app/scenes/KillIdlePlayersScene'
 import { getUserService } from './src/app/factories/ServiceFactory';
 
 const bot = new Telegraf<AppContext>(config.Bot.token)
-const commands = initializeBotCommands(bot)
+const commands = await initializeBotCommands(bot)
 
 bot.start((ctx) => {
     ctx.reply(Messages.responses.startMessage)

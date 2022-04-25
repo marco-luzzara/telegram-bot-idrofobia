@@ -1,4 +1,4 @@
-import * as config from 'config'
+import config from 'config'
 
 import { Scenes } from "telegraf";
 import AppContext from "../types/AppContext";

@@ -1,8 +1,11 @@
-import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, 
-    BelongsToSetAssociationMixin, CreationOptional, DataTypes, 
-    HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes, 
-    InferCreationAttributes, Model, NonAttribute } from 'sequelize'
-const util = require('util')
+// import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, 
+//     BelongsToSetAssociationMixin, CreationOptional, DataTypes, 
+//     HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes, 
+//     InferCreationAttributes, Model, NonAttribute } from 'sequelize'
+import Sequelize from 'sequelize'
+const { DataTypes, Model } = Sequelize
+
+import { types } from 'util'
 
 import { createThrowingProxy } from '../../infrastructure/utilities/ProxyUtil'
 import KillCode from '../../model/custom_types/KillCode'
@@ -11,8 +14,10 @@ import UserInfo from '../../model/custom_types/UserInfo'
 import PlayingUser from '../../model/domain/PlayingUser'
 import { dbInstance as sequelize } from '../DbConnection'
 
-class UserModel extends Model<InferAttributes<UserModel>, InferCreationAttributes<UserModel>> {
-    declare id: CreationOptional<number>
+class UserModel extends Model<Sequelize.InferAttributes<UserModel>, 
+    Sequelize.InferCreationAttributes<UserModel>> 
+{
+    declare id: Sequelize.CreationOptional<number>
     declare name: string
     declare surname: string
     declare address: string
@@ -51,22 +56,24 @@ UserModel.init(
         }
     );
 
-class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, InferCreationAttributes<PlayingUserModel>> {
+class PlayingUserModel extends Model<Sequelize.InferAttributes<PlayingUserModel>, 
+    Sequelize.InferCreationAttributes<PlayingUserModel>> 
+{
     declare id: number
     declare telegramId: string
     declare lastKill: Date | null
     declare profilePictureUrl: string
     declare killCode: string
 
-    declare getUser: BelongsToGetAssociationMixin<UserModel>;
-    declare setUser: BelongsToSetAssociationMixin<UserModel, number>;
-    declare createUser: BelongsToCreateAssociationMixin<UserModel>;
-    declare user?: NonAttribute<UserModel>
+    declare getUser: Sequelize.BelongsToGetAssociationMixin<UserModel>;
+    declare setUser: Sequelize.BelongsToSetAssociationMixin<UserModel, number>;
+    declare createUser: Sequelize.BelongsToCreateAssociationMixin<UserModel>;
+    declare user?: Sequelize.NonAttribute<UserModel>
 
 
-    declare getTargetUser: HasOneGetAssociationMixin<PlayingUserModel>;
-    declare setTargetUser: HasOneSetAssociationMixin<PlayingUserModel, number>;
-    declare targetUser?: NonAttribute<PlayingUserModel>
+    declare getTargetUser: Sequelize.HasOneGetAssociationMixin<PlayingUserModel>;
+    declare setTargetUser: Sequelize.HasOneSetAssociationMixin<PlayingUserModel, number>;
+    declare targetUser?: Sequelize.NonAttribute<PlayingUserModel>
 
     getUserInfo(userModel: UserModel): UserInfo {
         return new UserInfo(
@@ -110,7 +117,7 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, InferCre
             lastKill: playingUser.lastKill
         }
 
-        return util.types.isProxy(playingUser.target) ? 
+        return types.isProxy(playingUser.target) ? 
             localData : 
             { 
                 ...localData,
