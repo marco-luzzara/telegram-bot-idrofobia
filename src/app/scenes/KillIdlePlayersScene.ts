@@ -1,23 +1,13 @@
 import config from 'config'
 
 import { Scenes } from "telegraf";
+import { cancelButton, confirmButton } from './buttons/CallbackButtons'
 import AppContext from "../types/AppContext";
 import { getAdminUserService } from '../factories/ServiceFactory'
 import { Messages, getFormattedMessage } from "../../infrastructure/utilities/GlobalizationUtil";
 import { getTimespan } from '../factories/TimeSpanFactory'
-import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram';
 
 const KILL_IDLE_PLAYERS_SCENE = 'KILL_IDLE_PLAYERS_SCENE'
-
-const confirmButton: InlineKeyboardButton.CallbackButton = {
-    text: '✅',
-    callback_data: 'ok'
-}
-
-const cancelButton: InlineKeyboardButton.CallbackButton = {
-    text: '❌',
-    callback_data: 'cancel'
-}
 
 const killIdlePlayersScene = new Scenes.BaseScene<AppContext>(KILL_IDLE_PLAYERS_SCENE)
 killIdlePlayersScene.enter(async (ctx) => {
