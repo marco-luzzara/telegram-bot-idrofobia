@@ -11,6 +11,7 @@ done
   
 >&2 echo "Postgres is up - executing command"
 
-NODE_ENV=integration_test jest --detectOpenHandles tests/services
+NODE_ENV=integration_test node --no-warnings --experimental-vm-modules \
+    node_modules/.bin/jest --runInBand tests/services/
 
 docker-compose -f ./scripts/docker/docker-compose.yml down

@@ -30,11 +30,11 @@ export default class AdminUserService {
         const userGenerator = this.userRepo.getAllUsers()
         const startingGameDate = new Date()
 
-        const firstPlayer: PlayingUser = (await userGenerator.next()).value as PlayingUser
+        const firstPlayer = (await userGenerator.next()).value as PlayingUser
         // there is not any user
         if (firstPlayer === undefined)
             return
-        firstPlayer.lastKill = startingGameDate
+        firstPlayer.startPlaying(startingGameDate)
 
         let previousPlayer = firstPlayer
         for await (let player of userGenerator) {
@@ -43,7 +43,7 @@ export default class AdminUserService {
             await this.notificationService.sendMessage(previousPlayer.userInfo.telegramId.toString(), 
                 NotificationMessages.GameStarted)
 
-            player.lastKill = startingGameDate
+            player.startPlaying(startingGameDate)
             previousPlayer = player
         }
 

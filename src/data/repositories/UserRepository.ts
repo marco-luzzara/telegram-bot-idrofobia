@@ -4,7 +4,7 @@ import PlayingUser from '../../model/domain/PlayingUser'
 import { PlayingUserModel, UserModel } from '../model/UserModel'
 import IUserRepository from './interfaces/IUserRepository'
 import TelegramId from '../../model/custom_types/TelegramId';
-import Sequelize from 'sequelize';
+import Sequelize, { FindOptions, WhereOptions, Includeable } from 'sequelize';
 const { Op } = Sequelize
 import { dbInstance } from '../DbConnection';
 
@@ -72,32 +72,49 @@ export default class UserRepository implements IUserRepository {
             })
     }
 
-    private async * getAllUsersWithFilters(whereOptions?: object): AsyncGenerator<PlayingUser, any, undefined> {
-        let fetchedRows = 0
-        let players: PlayingUser[] = []
-        do {
-            const findAllOptions = {
-                    include: {
-                        model: UserModel
-                    },
-                    limit: 10,
-                    offset: fetchedRows
-                }
-            if (whereOptions !== undefined)
-                findAllOptions['where'] = whereOptions
-            // TODO: can be optimized by starting the next promise (but not awaiting it)
-            //       before the yield
-            players = (await PlayingUserModel.findAll(findAllOptions))
-                .map(m => m.getPlayingUser());
+    // TODO: findAll as a generator is not implemented yet in sequelize. streaming is hard to do too
+    // private async * getAllUsersWithFilters(whereOptions?: WhereOptions): AsyncGenerator<PlayingUser, any, undefined> {
+    //     let fetchedRows = 0
+    //     let players: PlayingUser[] = []
+    //     do {
+    //         const findAllOptions: FindOptions = {
+    //                 include: {
+    //                     model: UserModel
+    //                 },
+    //                 limit: 10,
+    //                 offset: fetchedRows
+    //             }
+    //         if (whereOptions !== undefined)
+    //             findAllOptions.where = whereOptions
+    //         // TODO: can be optimized by starting the next promise (but not awaiting it)
+    //         //       before the yield
+    //         players = (await PlayingUserModel.findAll(findAllOptions))
+    //             .map(m => m.getPlayingUser());
 
-            if (players.length > 0)
-                yield* players
+    //         if (players.length > 0)
+    //             yield* players
 
-            fetchedRows += players.length
-        } while (players.length > 0)
+    //         fetchedRows += players.length
+    //     } while (players.length > 0)
+    // }
+
+    private async * getAllUsersWithFilters(whereOptions?: WhereOptions): AsyncGenerator<PlayingUser, any, undefined> {
+        const findAllOptions: FindOptions = {
+            include: {
+                model: UserModel
+            },
+            order: dbInstance.random()
+        }
+        if (whereOptions !== undefined)
+            findAllOptions.where = whereOptions
+        
+        const players = (await PlayingUserModel.findAll(findAllOptions))
+            .map(m => m.getPlayingUser())
+        
+        yield* players
     }
 
-    private createRecursiveIncludeOption(nestedLevel: number): Sequelize.Includeable {
+    private createRecursiveIncludeOption(nestedLevel: number): Includeable {
         return nestedLevel == 0 ? 
             {
                 model: UserModel
@@ -111,6 +128,6 @@ export default class UserRepository implements IUserRepository {
                     as: 'targetUser',
                     include: this.createRecursiveIncludeOption(nestedLevel - 1)
                 }
-            ] as Sequelize.Includeable
+            ] as Includeable
     }
 }

@@ -49,6 +49,11 @@ export default class PlayingUser {
         return KillTargetResult.KillTargetSuccessful
     }
 
+    startPlaying(startGameDate: Date) {
+        assert(!this.isPlaying(), 'user is already playing')
+        this.lastKill = startGameDate
+    }
+
     die() {
         assert(!this.isDead(), 'user cannot die twice')
         this.target = null

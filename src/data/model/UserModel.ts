@@ -1,8 +1,7 @@
-// import { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, 
-//     BelongsToSetAssociationMixin, CreationOptional, DataTypes, 
-//     HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes, 
-//     InferCreationAttributes, Model, NonAttribute } from 'sequelize'
-import Sequelize from 'sequelize'
+import Sequelize, { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, 
+        BelongsToSetAssociationMixin, CreationOptional, 
+        HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes, 
+        InferCreationAttributes, NonAttribute } from 'sequelize'
 const { DataTypes, Model } = Sequelize
 
 import { types } from 'util'
@@ -14,10 +13,10 @@ import UserInfo from '../../model/custom_types/UserInfo'
 import PlayingUser from '../../model/domain/PlayingUser'
 import { dbInstance as sequelize } from '../DbConnection'
 
-class UserModel extends Model<Sequelize.InferAttributes<UserModel>, 
-    Sequelize.InferCreationAttributes<UserModel>> 
+class UserModel extends Model<InferAttributes<UserModel>, 
+    InferCreationAttributes<UserModel>> 
 {
-    declare id: Sequelize.CreationOptional<number>
+    declare id: CreationOptional<number>
     declare name: string
     declare surname: string
     declare address: string
@@ -56,8 +55,8 @@ UserModel.init(
         }
     );
 
-class PlayingUserModel extends Model<Sequelize.InferAttributes<PlayingUserModel>, 
-    Sequelize.InferCreationAttributes<PlayingUserModel>> 
+class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, 
+    InferCreationAttributes<PlayingUserModel>> 
 {
     declare id: number
     declare telegramId: string
@@ -65,15 +64,15 @@ class PlayingUserModel extends Model<Sequelize.InferAttributes<PlayingUserModel>
     declare profilePictureUrl: string
     declare killCode: string
 
-    declare getUser: Sequelize.BelongsToGetAssociationMixin<UserModel>;
-    declare setUser: Sequelize.BelongsToSetAssociationMixin<UserModel, number>;
-    declare createUser: Sequelize.BelongsToCreateAssociationMixin<UserModel>;
-    declare user?: Sequelize.NonAttribute<UserModel>
+    declare getUser: BelongsToGetAssociationMixin<UserModel>;
+    declare setUser: BelongsToSetAssociationMixin<UserModel, number>;
+    declare createUser: BelongsToCreateAssociationMixin<UserModel>;
+    declare user?: NonAttribute<UserModel>
 
 
-    declare getTargetUser: Sequelize.HasOneGetAssociationMixin<PlayingUserModel>;
-    declare setTargetUser: Sequelize.HasOneSetAssociationMixin<PlayingUserModel, number>;
-    declare targetUser?: Sequelize.NonAttribute<PlayingUserModel>
+    declare getTargetUser: HasOneGetAssociationMixin<PlayingUserModel>;
+    declare setTargetUser: HasOneSetAssociationMixin<PlayingUserModel, number>;
+    declare targetUser?: NonAttribute<PlayingUserModel>
 
     getUserInfo(userModel: UserModel): UserInfo {
         return new UserInfo(
