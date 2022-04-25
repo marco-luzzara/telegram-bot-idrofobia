@@ -37,7 +37,7 @@ export default class UserService {
                 await this.notificationService.sendMessage(
                     possiblyKilledUser.userInfo.telegramId.toString(), 
                     NotificationMessages.UserIsDead)
-                // TODO: notify whether he is the winner
+                await this.getUserStatus(telegramId)
                 break
             case KillTargetResult.DeadUserCannotKill:
                 await this.notificationService.sendMessage(telegramId, NotificationMessages.DeadUserCannotKill)

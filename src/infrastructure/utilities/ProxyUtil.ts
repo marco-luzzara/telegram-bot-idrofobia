@@ -1,5 +1,3 @@
-
-// TODO: see ConstructorParameters<Type>
 export function createThrowingProxy<T>(): T {
     const handler = {
         get: function(target, prop, receiver) {

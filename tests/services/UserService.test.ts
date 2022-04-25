@@ -95,6 +95,9 @@ describe('killUserTarget', () => {
         expect(mockNotificationService.sendMessage)
             .toHaveBeenCalledWith(generateTelegramIdFromSeed('user2').toString(),
                 NotificationMessages.UserIsDead)
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(killerTId, NotificationMessages.UserStatusPlaying, 
+                generateKillCodeFromSeed('user1').toString(), expect.anything())
     });
 
     test(`given a playing user, when the killcode he inserts to kill the target is wrong, 
