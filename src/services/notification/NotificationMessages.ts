@@ -3,12 +3,15 @@ const enum NotificationMessages {
     GameStarted = 'GameStarted',
     UserIsDead = 'UserIsDead',
     UserIsDeadBecauseOfIdleness = 'UserIsDeadBecauseOfIdleness',
+
     // errors
     GameNotStartedYet = 'GameNotStartedYet',
     UnregisteredUser = 'UnregisteredUser',
     WinnerCannotKill = 'WinnerCannotKill',
     DeadUserCannotKill = 'DeadUserCannotKill',
     WrongKillCode = 'WrongKillCode',
+
+    // user status
     UserStatusDead = 'UserStatusDead',
     UserStatusWinner = 'UserStatusWinner',
     UserStatusPlaying = 'UserStatusPlaying',
