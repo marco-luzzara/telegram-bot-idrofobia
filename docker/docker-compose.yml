@@ -1,0 +1,27 @@
+services:
+  db:
+    image: postgis/postgis:13-master
+    container_name: idrofobia_db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./docker/volumes/db/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=test123
+    networks:
+      - bot_network
+
+  bot:
+    build:
+      context: .
+      dockerfile: ./docker/dockerfiles/bot/Dockerfile
+    container_name: idrofobia_bot
+    depends_on:
+      - db
+    volumes:
+      - ./config/production.json:/app/config/production.json
+    networks:
+      - bot_network
+    
+networks:
+  bot_network:

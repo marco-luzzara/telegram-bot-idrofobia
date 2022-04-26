@@ -17,10 +17,3 @@ CREATE TABLE IF NOT EXISTS idrofobia_players (
     FOREIGN KEY (id) REFERENCES players(id),
     FOREIGN KEY (target) REFERENCES idrofobia_players(id)
 );
-
-CREATE TABLE IF NOT EXISTS bot_admins (
-    telegram_id VARCHAR(100),
-    name VARCHAR(100) NOT NULL,
-    surname VARCHAR(100) NOT NULL,
-    PRIMARY KEY(telegram_id)
-);

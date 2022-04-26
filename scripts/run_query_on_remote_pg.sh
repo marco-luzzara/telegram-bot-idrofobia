@@ -2,7 +2,7 @@
 # usage example 
 # ./scripts/run_query_on_postgres.sh "SELECT * from players where column = 'test';"
 
-. ./envs/directus.env
+. ./scripts/envs/directus.env
 
 # escape ' inside query with '\''
 query="$(echo "$1" | sed s/\'/"\'\\\'\'"/g)"

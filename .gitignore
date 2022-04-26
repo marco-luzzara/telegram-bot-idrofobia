@@ -1,8 +1,8 @@
 # custom
 out/
-envs/*
-!/envs/sample.env
-scripts/docker/db/
+scripts/envs/*
+!/scripts/envs/sample.env
+docker/volumes/
 config/*
 !/config/test.json
 .vscode/

@@ -1,0 +1,12 @@
+node_modules/
+npm-debug.log
+.vscode/
+config/*
+docker/
+out/
+.git/
+scripts/
+tests/
+.gitignore
+jest.config.ts
+README.md
