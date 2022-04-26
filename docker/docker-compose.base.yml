@@ -1,0 +1,17 @@
+services:
+  database:
+    image: postgis/postgis:13-master
+    networks:
+      - directus
+
+  bot:
+    build:
+      dockerfile: docker/dockerfiles/bot/Dockerfile
+    container_name: idrofobia_bot
+    depends_on:
+      - database
+    networks:
+      - directus
+    
+networks:
+  directus:
