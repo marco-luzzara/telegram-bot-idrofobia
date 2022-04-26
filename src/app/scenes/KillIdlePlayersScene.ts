@@ -13,10 +13,13 @@ const killIdlePlayersScene = new Scenes.BaseScene<AppContext>(KILL_IDLE_PLAYERS_
 killIdlePlayersScene.enter(async (ctx) => {
     await ctx.reply(Messages.responses.requestForTimespan)
 });
+
 killIdlePlayersScene.on('text', async (ctx) => {
     const ts = getTimespan(ctx.message.text)
     const confirmIdlePlayersKillMessage = getFormattedMessage('responses', 'confirmIdlePlayersKill', 
         ts.days, ts.hours, ts.minutes)
+
+    ctx.scene.state = { idleTs: ts }
 
     await ctx.reply(confirmIdlePlayersKillMessage, {
             reply_markup: {
@@ -26,17 +29,16 @@ killIdlePlayersScene.on('text', async (ctx) => {
 });
 
 killIdlePlayersScene.action('ok', async (ctx) => {
-    // const service = getAdminUserService(ctx)
+    const ts = ctx.scene.state['idleTs']
+    const service = getAdminUserService(ctx)
 
-    // await service.killIdlePlayers(config.Bot.adminGroupId, ts)
+    await service.killIdlePlayers(config.Bot.adminGroupId, ts)
 
-    await ctx.reply('done')
     await ctx.answerCbQuery()
     await ctx.scene.leave()
 });
 
 killIdlePlayersScene.action('cancel', async (ctx) => {
-    await ctx.reply('cancel')
     await ctx.answerCbQuery()
     await ctx.scene.leave()
 });

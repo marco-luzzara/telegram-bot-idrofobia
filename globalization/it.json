@@ -6,7 +6,8 @@
         "requestForTimespan": "Inserisci il tempo massimo di inattività utilizzando il formato dd:hh:mm. Per esempio 02:03:04 sta per 2 giorni, 3 ore e 4 minuti",
         "confirmIdlePlayersKill": "Per confermare l'uccisione dei giocatori inattivi per un tempo di (Giorni: %d, Ore: %d, Minuti: %d), clicca qui sotto",
         "requestForUsernameToKill": "Inserisci l'username della persona da uccidere",
-        "confirmUserToKill": "Per confermare l'uccisione del giocatore %s, clicca qui sotto"
+        "confirmUserToKill": "Per confermare l'uccisione del giocatore %s, clicca qui sotto",
+        "confirmToStartTheGame": "Sei sicuro di voler far partire (o ricominciare) il gioco?"
     },
     "commandDescriptions": {
         "kill_target": "Uccidi il tuo target usando il suo kill code",

@@ -29,17 +29,15 @@ killUserScene.on('text', async (ctx) => {
 
 killUserScene.action('ok', async (ctx) => {
     const username = ctx.scene.state['victimUsername']
-    // const service = getAdminUserService(ctx)
+    const service = getAdminUserService(ctx)
 
-    // await service.killPlayer(config.Bot.adminGroupId, username)
+    await service.killPlayer(config.Bot.adminGroupId, username)
 
-    await ctx.reply(`@${username} killed`)
     await ctx.answerCbQuery()
     await ctx.scene.leave()
 });
 
 killUserScene.action('cancel', async (ctx) => {
-    await ctx.reply('cancel')
     await ctx.answerCbQuery()
     await ctx.scene.leave()
 });
