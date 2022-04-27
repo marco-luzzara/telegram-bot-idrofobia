@@ -143,7 +143,7 @@ PlayingUserModel.init(
                 field: 'last_kill'
             },
             profilePictureUrl: {
-                type: DataTypes.STRING,
+                type: DataTypes.STRING(2048),
                 allowNull: false,
                 validate: {
                     isUrl: true
@@ -151,7 +151,7 @@ PlayingUserModel.init(
                 field: 'profile_picture_url'
             },
             killCode: {
-                type: DataTypes.STRING,
+                type: DataTypes.CHAR(10),
                 allowNull: false,
                 field: 'kill_code'
             }

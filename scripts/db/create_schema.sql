@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS idrofobia_players (
     telegram_id VARCHAR(100) NOT NULL,
     last_kill TIMESTAMP WITH TIME ZONE,
     profile_picture_url VARCHAR(2048) NOT NULL,
+    kill_code CHAR(10) NOT NULL, 
     target INT,
     PRIMARY KEY (id),
     UNIQUE (telegram_id),

@@ -50,7 +50,6 @@ export default class PlayingUser {
     }
 
     startPlaying(startGameDate: Date) {
-        assert(!this.isPlaying(), 'user is already playing')
         this.lastKill = startGameDate
     }
 
