@@ -3,6 +3,7 @@ import { BotCommand } from "telegraf/typings/core/types/typegram";
 import { Messages } from "../infrastructure/utilities/GlobalizationUtil";
 import config from 'config'
 import ValidationError from "../infrastructure/errors/ValidationError";
+import RedisUsernameMapping from "../services/mapping/RedisUsernameMapping";
 
 export async function initializeBotCommands(bot: Telegraf): Promise<{ [key: string]: BotCommand }> {
     const killTargetCommand: BotCommand = {
@@ -61,8 +62,21 @@ export function injectErrorHandler(bot: Telegraf): Telegraf {
         if (err instanceof ValidationError)
             await ctx.reply(err.message)
         else
-            await ctx.telegram.sendMessage(config.Bot.adminGroupId, err.message)
+            await ctx.telegram.sendMessage(config.Bot.adminGroupId, 
+                `Error from user ${ctx.from?.username}: \n\`\`\`${JSON.stringify(err)}\`\`\``)
     })
+
+    return bot
+}
+
+export function injectMiddlewareForChatIdStorage(bot: Telegraf): Telegraf {
+    bot.use(async (ctx, next) => {
+        if (ctx.from.username) {
+            const usernameMappingService = new RedisUsernameMapping()
+            await usernameMappingService.storeChatId(ctx.from.username, ctx.chat.id)
+        }
+        await next()
+    });
 
     return bot
 }

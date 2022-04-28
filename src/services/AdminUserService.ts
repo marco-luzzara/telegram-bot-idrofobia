@@ -24,9 +24,9 @@ export default class AdminUserService {
     /**
      * start or restart the game by reassigning targets and setting the lastKill to the current
      * date for all the users
-     * @param adminTelegramId the telegram id of the admin
+     * @param adminGroupId the group id of the admin group
      */
-    async startGame(adminTelegramId: string): Promise<void> {
+    async startGame(adminGroupId: number): Promise<void> {
         const userGenerator = this.userRepo.getAllUsers()
         const startingGameDate = new Date()
 
@@ -52,33 +52,33 @@ export default class AdminUserService {
         await this.notificationService.sendMessage(previousPlayer.userInfo.telegramId.toString(), 
             NotificationMessages.GameStarted)
 
-        await this.notificationService.sendMessage(adminTelegramId, 
+        await this.notificationService.sendMessage(adminGroupId, 
             NotificationMessages.GameStartedSuccessfully)
     }
 
     /**
      * manually kill a player
-     * @param adminTelegramId the telegram id of the admin
+     * @param adminGroupId the group id of the admin group
      * @param telegramId the telegram id of the player to be killed
      */
-    async killPlayer(adminTelegramId: string, telegramId: string): Promise<void> {
+    async killPlayer(adminGroupId: number, telegramId: string): Promise<void> {
         const userTId = new TelegramId(telegramId)
         const user = await this.userRepo.getUserFromTargetTId(userTId, 1)
 
         await this.userService.killUserTarget(user.userInfo.telegramId.toString(), 
             user.target.userInfo.killCode.toString())
 
-        await this.notificationService.sendMessage(adminTelegramId, 
+        await this.notificationService.sendMessage(adminGroupId, 
             NotificationMessages.AskToUserForKillResult)
     }
 
     /**
      * kill those players that have not killed their target within the `idleTimeSpan` time.
      * these players are called idle players.
-     * @param adminTelegramId the telegram id of the admin
+     * @param adminGroupId the group id of the admin group
      * @param idleTimeSpan the maximum amount of time a player can play without killing anyone
      */
-    async killIdlePlayers(adminTelegramId: string, idleTimeSpan: timespan.TimeSpan): Promise<void> {
+    async killIdlePlayers(adminGroupId: number, idleTimeSpan: timespan.TimeSpan): Promise<void> {
         let firstNotIdle: PlayingUser = undefined
         let previousNotIdle: PlayingUser = undefined
         const idleCheckTime = new Date()
@@ -109,7 +109,7 @@ export default class AdminUserService {
             await this.userService.getUserStatus(previousNotIdle.userInfo.telegramId.toString())
         }
 
-        await this.notificationService.sendMessage(adminTelegramId, 
+        await this.notificationService.sendMessage(adminGroupId, 
             NotificationMessages.IdleUsersKilledSuccessfully)
     }
 }

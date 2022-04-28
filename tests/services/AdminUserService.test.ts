@@ -1,6 +1,6 @@
 import timespan from "timespan"
 
-import { dbInstance } from '../../src/data/DbConnection'
+import { dbInstance } from '../../src/infrastructure/storage/DbConnection'
 import { createFakePlayingUserDbObject, seedDbWithRingOfNPlayers } from '../utils/factories/DbPlayingUserFactory'
 import IUserRepository from '../../src/data/repositories/interfaces/IUserRepository'
 import UserRepository from '../../src/data/repositories/UserRepository'
@@ -22,29 +22,15 @@ beforeEach(async () => {
     service = new AdminUserService(repo, mockNotificationService)
 });
 
-// test(`given a playing user, when he tries to kill the target as an admin, 
-//     it receives an authorization error`, async () => 
-// {
-//     await seedDbWithRingOfNPlayers(2)
-//     await createFakeAdminUserDbObject('a0')
-//     const userRepo: IUserRepository = new UserRepository()
-//     const adminRepo: IAdminUserRepository = new AdminUserRepository()
-//     const service = new AdminUserService(userRepo, adminRepo)
-
-//     await expect(service.killUserTarget(
-//         generateTelegramIdFromSeed('user0').toString(), 
-//         generateTelegramIdFromSeed('user0').toString())).rejects.toThrowError(UnauthorizedError)
-// });
-
 describe('killPlayer', () => {
     // TODO: tests with errors too
     test(`given an admin user, when he kills the player manually, 
         the associated killer receives a new target`, async () => 
     {
         await seedDbWithRingOfNPlayers(3)
-        const adminTId = generateTelegramIdFromSeed('admin').toString()
+        const adminGId = 1000
 
-        await service.killPlayer(adminTId, generateTelegramIdFromSeed('user2').toString())
+        await service.killPlayer(adminGId, generateTelegramIdFromSeed('user2').toString())
 
         expect(mockNotificationService.sendMessage)
             .toHaveBeenCalledWith(generateTelegramIdFromSeed('user1').toString(), 
@@ -53,7 +39,7 @@ describe('killPlayer', () => {
             .toHaveBeenCalledWith(generateTelegramIdFromSeed('user2').toString(), 
                 NotificationMessages.UserIsDead)
         expect(mockNotificationService.sendMessage)
-            .toHaveBeenCalledWith(adminTId, NotificationMessages.AskToUserForKillResult)
+            .toHaveBeenCalledWith(adminGId, NotificationMessages.AskToUserForKillResult)
     });
 });
 
@@ -67,9 +53,9 @@ describe('startGame', () => {
             await createFakePlayingUserDbObject('user1'),
             await createFakePlayingUserDbObject('user2')
         ]
-        const adminTId = generateTelegramIdFromSeed('admin').toString()
+        const adminGId = 1000
 
-        await service.startGame(adminTId)
+        await service.startGame(adminGId)
 
         let curPlayer = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 3)
         const starterPlayerId = curPlayer.id
@@ -89,15 +75,15 @@ describe('killIdlePlayers', () => {
         return the players as they are`, async () => 
     {
         await seedDbWithRingOfNPlayers(3)
-        const adminTId = generateTelegramIdFromSeed('admin').toString()
+        const adminGId = 1000
 
-        await service.killIdlePlayers(adminTId, new timespan.TimeSpan(0, 0, 0, 10))
+        await service.killIdlePlayers(adminGId, new timespan.TimeSpan(0, 0, 0, 10))
 
         let curPlayer = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 3)
         expect(curPlayer.target.target.target.id).toBe(curPlayer.id)
         expect([curPlayer.isDead(), curPlayer.target.isDead(), curPlayer.target.target.isDead()])
             .not.toContain(true)
-        expectAdminSuccessfulNotification(adminTId)
+        expectAdminSuccessfulNotification(adminGId)
         expect(mockNotificationService.sendMessage).not.toHaveBeenCalledTimes(1)
     });
 
@@ -108,14 +94,14 @@ describe('killIdlePlayers', () => {
         const deadPlayer = await createFakePlayingUserDbObject('user2')
         deadPlayer.lastKill = new Date(2000, 1, 1)
         await deadPlayer.save()
-        const adminTId = generateTelegramIdFromSeed('admin').toString()
+        const adminGId = 1000
 
-        await service.killIdlePlayers(adminTId, new timespan.TimeSpan(0, 0, 0, 10))
+        await service.killIdlePlayers(adminGId, new timespan.TimeSpan(0, 0, 0, 10))
 
         expect(mockNotificationService.sendMessage)
             .not.toHaveBeenCalledWith(generateTelegramIdFromSeed('user2').toString(),
                 NotificationMessages.UserIsDeadBecauseOfIdleness)
-        expectAdminSuccessfulNotification(adminTId)
+        expectAdminSuccessfulNotification(adminGId)
     });
 
     test(`given an admin user, when he kills idle players and one is idle, 
@@ -124,16 +110,16 @@ describe('killIdlePlayers', () => {
         const players = await seedDbWithRingOfNPlayers(3)
         players[0].lastKill = new Date(2000, 1, 1)
         await players[0].save()
-        const adminTId = generateTelegramIdFromSeed('admin').toString()
+        const adminGId = 1000
 
-        await service.killIdlePlayers(adminTId, new timespan.TimeSpan(0, 0, 0, 10))
+        await service.killIdlePlayers(adminGId, new timespan.TimeSpan(0, 0, 0, 10))
 
         let player0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 1)
         let player2 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user2'), 1)
         expect(player0.isDead()).toBeTruthy()
         expect(player2.target.id).toBe(players[1].id)
         expectUserDeadOfIdlenessNotification('user0')
-        expectAdminSuccessfulNotification(adminTId)
+        expectAdminSuccessfulNotification(adminGId)
     });
 
     test(`given an admin user, when he kills idle players and consecutive ones are idle, 
@@ -144,9 +130,9 @@ describe('killIdlePlayers', () => {
         await players[0].save()
         players[1].lastKill = new Date(2000, 1, 1)
         await players[1].save()
-        const adminTId = generateTelegramIdFromSeed('admin').toString()
+        const adminGId = 1000
 
-        await service.killIdlePlayers(adminTId, new timespan.TimeSpan(0, 0, 0, 10))
+        await service.killIdlePlayers(adminGId, new timespan.TimeSpan(0, 0, 0, 10))
 
         let player0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 1)
         let player1 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
@@ -156,7 +142,7 @@ describe('killIdlePlayers', () => {
         expect(player3.target.id).toBe(players[2].id)
         expectUserDeadOfIdlenessNotification('user0')
         expectUserDeadOfIdlenessNotification('user1')
-        expectAdminSuccessfulNotification(adminTId)
+        expectAdminSuccessfulNotification(adminGId)
     });
 
     test(`given an admin user, when he kills idle players and multiple ones are idle, 
@@ -167,9 +153,9 @@ describe('killIdlePlayers', () => {
         await players[0].save()
         players[2].lastKill = new Date(2000, 1, 1)
         await players[2].save()
-        const adminTId = generateTelegramIdFromSeed('admin').toString()
+        const adminGId = 1000
 
-        await service.killIdlePlayers(adminTId, new timespan.TimeSpan(0, 0, 0, 10))
+        await service.killIdlePlayers(adminGId, new timespan.TimeSpan(0, 0, 0, 10))
 
         let player0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 1)
         let player2 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user2'), 1)
@@ -179,12 +165,12 @@ describe('killIdlePlayers', () => {
         expect(player3.target.id).toBe(players[1].id)
         expectUserDeadOfIdlenessNotification('user0')
         expectUserDeadOfIdlenessNotification('user2')
-        expectAdminSuccessfulNotification(adminTId)
+        expectAdminSuccessfulNotification(adminGId)
     });
 
-    function expectAdminSuccessfulNotification(adminTId: string) {
+    function expectAdminSuccessfulNotification(adminGId: number) {
         expect(mockNotificationService.sendMessage)
-            .toHaveBeenCalledWith(adminTId, NotificationMessages.IdleUsersKilledSuccessfully)
+            .toHaveBeenCalledWith(adminGId, NotificationMessages.IdleUsersKilledSuccessfully)
     }
 
     function expectUserDeadOfIdlenessNotification(userId: string) {

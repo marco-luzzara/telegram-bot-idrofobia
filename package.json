@@ -6,6 +6,7 @@
   "dependencies": {
     "config": "^3.3.7",
     "pg": "^8.7.3",
+    "redis": "^4.0.6",
     "sequelize": "^6.18.0",
     "telegraf": "^4.7.0",
     "timespan": "^2.3.0"
@@ -14,7 +15,7 @@
   "scripts": {
     "prestart": "npx tsc",
     "start": "NODE_ENV=production node --es-module-specifier-resolution=node out/index.js",
-    "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js tests/",
+    "test": "node --no-warnings --experimental-vm-modules node_modules/jest/bin/jest.js --testPathIgnorePatterns=/tests/services/mapping/",
     "integration_test": "./scripts/run_integration_tests.sh"
   },
   "repository": {

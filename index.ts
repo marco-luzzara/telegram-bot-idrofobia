@@ -1,7 +1,7 @@
 import { Scenes, session, Telegraf } from 'telegraf'
 import config from 'config'
 import { Messages } from './src/infrastructure/utilities/GlobalizationUtil';
-import { initializeBotCommands, injectErrorHandler } from './src/app/BotInitializer';
+import { initializeBotCommands, injectErrorHandler, injectMiddlewareForChatIdStorage } from './src/app/BotInitializer';
 import AppContext from './src/app/types/AppContext'
 import killTargetScene from './src/app/scenes/KillTargetScene'
 import killIdlePlayersScene from './src/app/scenes/KillIdlePlayersScene'
@@ -12,12 +12,12 @@ import { getUserService } from './src/app/factories/ServiceFactory';
 const bot = new Telegraf<AppContext>(config.Bot.token)
 const commands = await initializeBotCommands(bot)
 
-bot.start((ctx) => {
-    ctx.reply(Messages.responses.startMessage)
+bot.start(async (ctx) => {
+    await ctx.reply(Messages.responses.startMessage)
 });
 
-bot.help((ctx) => {
-    ctx.reply(Messages.responses.helpMessage)
+bot.help(async (ctx) => {
+    await ctx.reply(Messages.responses.helpMessage)
 });
 
 const stage = new Scenes.Stage<AppContext>([
@@ -27,6 +27,7 @@ const stage = new Scenes.Stage<AppContext>([
         startGameScene
     ])
 bot.use(session())
+injectMiddlewareForChatIdStorage(bot)
 bot.use(stage.middleware())
 
 bot.command(commands.killTargetCommand.command, async (ctx) => {

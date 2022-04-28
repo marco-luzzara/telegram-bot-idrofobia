@@ -1,4 +1,4 @@
-import { dbInstance } from '../../src/data/DbConnection'
+import { dbInstance } from '../../src/infrastructure/storage/DbConnection'
 import { seedDbWithRingOfNPlayers } from '../utils/factories/DbPlayingUserFactory'
 import IUserRepository from '../../src/data/repositories/interfaces/IUserRepository'
 import UserRepository from '../../src/data/repositories/UserRepository'
@@ -41,9 +41,7 @@ describe('killUserTarget', () => {
         await seedDbWithRingOfNPlayers(3)
         const userTId = generateTelegramIdFromSeed('user0').toString()
         const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed(userTId), 1)
-        user0.lastKill = null
-        user0.target = null
-        expect(user0.isPlaying()).toBeFalsy()
+        user0.stopPlaying()
         await repo.saveExistingUsers(user0)
         
         await service.killUserTarget(userTId, 
@@ -133,9 +131,7 @@ describe('getUserStatus', () => {
         await seedDbWithRingOfNPlayers(3)
         const userTId = generateTelegramIdFromSeed('user0').toString()
         const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed(userTId), 1)
-        user0.lastKill = null
-        user0.target = null
-        expect(user0.isPlaying()).toBeFalsy()
+        user0.stopPlaying()
         await repo.saveExistingUsers(user0)
         
         await service.getUserStatus(userTId)

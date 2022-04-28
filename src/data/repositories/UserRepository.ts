@@ -6,7 +6,7 @@ import IUserRepository from './interfaces/IUserRepository'
 import TelegramId from '../../model/custom_types/TelegramId';
 import Sequelize, { FindOptions, WhereOptions, Includeable } from 'sequelize';
 const { Op } = Sequelize
-import { dbInstance } from '../DbConnection';
+import { dbInstance } from '../../infrastructure/storage/DbConnection';
 
 export default class UserRepository implements IUserRepository {
     async getUserByTelegramId(telegramId: TelegramId, nestedLevel: number = 0): Promise<PlayingUser> {

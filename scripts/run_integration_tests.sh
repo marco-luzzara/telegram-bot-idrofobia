@@ -4,7 +4,7 @@
 
 docker-compose -f ./docker/docker-compose.base.yml \
     -f ./docker/docker-compose.local.yml --project-directory . up \
-    -d --force-recreate database
+    -d --force-recreate database cache
 
 until docker exec $DB_CONTAINER_NAME psql -U "postgres" -c '\q'; do
     >&2 echo "Postgres is unavailable - sleeping"
@@ -14,8 +14,8 @@ done
 >&2 echo "Postgres is up - executing command"
 
 NODE_ENV=integration_test node --no-warnings --experimental-vm-modules \
-    node_modules/.bin/jest --runInBand tests/services/
+    node_modules/.bin/jest --runInBand --forceExit tests/services/
 
 docker-compose -f ./docker/docker-compose.base.yml \
     -f ./docker/docker-compose.local.yml --project-directory . rm \
-    -f database
+    -f -s database cache

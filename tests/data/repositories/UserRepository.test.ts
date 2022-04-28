@@ -1,5 +1,5 @@
 import UserRepository from '../../../src/data/repositories/UserRepository'
-import { dbInstance } from '../../../src/data/DbConnection'
+import { dbInstance } from '../../../src/infrastructure/storage/DbConnection'
 import IUserRepository from '../../../src/data/repositories/interfaces/IUserRepository'
 import { generateTelegramIdFromSeed } from '../../utils/factories/TelegramIdFactory'
 import { createFakePlayingUserDbObject } from '../../utils/factories/DbPlayingUserFactory'
@@ -197,7 +197,7 @@ describe('saveExistingUsers', () => {
         await seedDbWithRingOfNPlayers(3)
         const user1 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)
         
-        user1.target = null
+        user1.die()
         await repo.saveExistingUsers(user1)
     
         const updatedUser = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'), 1)

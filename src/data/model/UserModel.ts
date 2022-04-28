@@ -11,7 +11,7 @@ import KillCode from '../../model/custom_types/KillCode'
 import TelegramId from '../../model/custom_types/TelegramId'
 import UserInfo from '../../model/custom_types/UserInfo'
 import PlayingUser from '../../model/domain/PlayingUser'
-import { dbInstance as sequelize } from '../DbConnection'
+import { dbInstance as sequelize } from '../../infrastructure/storage/DbConnection'
 
 class UserModel extends Model<InferAttributes<UserModel>, 
     InferCreationAttributes<UserModel>> 

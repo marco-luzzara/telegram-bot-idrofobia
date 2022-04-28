@@ -42,7 +42,7 @@ export default class PlayingUser {
         const killedUser = this.target
         const killedUserTarget = killedUser.target
 
-        killedUser.target = null
+        killedUser.die()
         this.target = killedUserTarget
 
         this.lastKill = new Date()
@@ -51,6 +51,13 @@ export default class PlayingUser {
 
     startPlaying(startGameDate: Date) {
         this.lastKill = startGameDate
+    }
+
+    stopPlaying() {
+        assert(this.isPlaying(), 'the user cannot stop playing if he is not playing yet')
+        
+        this.target = null
+        this.lastKill = null
     }
 
     die() {

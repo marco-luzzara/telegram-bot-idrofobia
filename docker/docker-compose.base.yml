@@ -10,8 +10,15 @@ services:
     container_name: idrofobia_bot
     depends_on:
       - database
+      - cache
     networks:
       - directus
+  
+  cache:
+    image: redis:7
+    networks:
+      - directus
+    command: ['redis-server', '--save', '60', '1', '--appendonly', 'yes']
     
 networks:
   directus:

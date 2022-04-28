@@ -8,5 +8,8 @@
         "id": "bot",
         "adminGroupId": 100000000,
         "language": "it"
+    },
+    "Redis": {
+        "url": "redis://localhost:6379"
     }
 }
