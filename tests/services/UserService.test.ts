@@ -21,6 +21,10 @@ beforeEach(async () => {
     service = new UserService(repo, mockNotificationService)
 });
 
+afterAll(async () => {
+    await dbInstance.sync({ force: true })
+})
+
 describe('killUserTarget', () => {
     test(`given a non-registered user, when it tries to kill a target, 
         it cannot because he is not registered`, async () => 

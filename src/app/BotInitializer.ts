@@ -63,7 +63,10 @@ export function injectErrorHandler(bot: Telegraf): Telegraf {
             await ctx.reply(err.message)
         else
             await ctx.telegram.sendMessage(config.Bot.adminGroupId, 
-                `Error from user ${ctx.from?.username}: \n\`\`\`${JSON.stringify(err)}\`\`\``)
+                `Error from user @${(ctx.from?.username ?? 'admin')}: \n<pre>${JSON.stringify(err)}</pre>`,
+                {
+                    parse_mode: 'HTML'
+                })
     })
 
     return bot
@@ -71,9 +74,11 @@ export function injectErrorHandler(bot: Telegraf): Telegraf {
 
 export function injectMiddlewareForChatIdStorage(bot: Telegraf): Telegraf {
     bot.use(async (ctx, next) => {
-        if (ctx.from.username) {
+        const chatId = ctx.chat.id
+        const username = ctx.from.username
+        if (chatId !== config.Bot.adminGroupId && username) {
             const usernameMappingService = new RedisUsernameMapping()
-            await usernameMappingService.storeChatId(ctx.from.username, ctx.chat.id)
+            await usernameMappingService.storeChatId(username, chatId)
         }
         await next()
     });

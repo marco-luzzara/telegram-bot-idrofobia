@@ -12,6 +12,10 @@ beforeEach(async () => {
     repo = new UserRepository()
 });
 
+afterAll(async () => {
+    await dbInstance.sync({ force: true })
+})
+
 describe('getUserByTelegramId', () => {
     test('given a telegramId, when getUserByTelegramId, it returns the user associated to that id', async () => {
         await seedDbWithRingOfNPlayers(3)

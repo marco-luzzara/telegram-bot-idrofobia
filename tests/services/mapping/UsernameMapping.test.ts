@@ -7,6 +7,10 @@ let service: IUsernameMapping = null
 beforeEach(async () => {
     client.sendCommand(['FLUSHDB'])
     service = new UsernameMapping()
+});
+
+afterAll(async () => {
+    client.sendCommand(['FLUSHDB'])
 })
 
 test(`given a new username, when it is stored with chatId, I can retrieve the chatId`, async () => {

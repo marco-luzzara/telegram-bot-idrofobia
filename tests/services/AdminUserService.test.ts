@@ -22,6 +22,10 @@ beforeEach(async () => {
     service = new AdminUserService(repo, mockNotificationService)
 });
 
+afterAll(async () => {
+    await dbInstance.sync({ force: true })
+})
+
 describe('killPlayer', () => {
     // TODO: tests with errors too
     test(`given an admin user, when he kills the player manually, 
@@ -67,6 +71,23 @@ describe('startGame', () => {
             curPlayer = curPlayer.target
         }
         expect(curPlayer.id).toBe(starterPlayerId)
+    });
+
+    test(`given an admin user, when he starts the game with a single player, 
+        he is automatically the winner`, async () => 
+    {
+        const players = [
+            await createFakePlayingUserDbObject('user0')
+        ]
+        const adminGId = 1000
+
+        await service.startGame(adminGId)
+
+        let curPlayer = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 1)
+        expect(curPlayer.isWinner()).toBeTruthy()
+        expect(mockNotificationService.sendMessage)
+            .toHaveBeenCalledWith(generateTelegramIdFromSeed('user0').toString(), 
+                NotificationMessages.GameStarted)
     });
 });
 
