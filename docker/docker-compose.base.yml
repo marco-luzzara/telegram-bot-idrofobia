@@ -1,24 +1,14 @@
 services:
   database:
     image: postgis/postgis:13-master
-    networks:
-      - directus
 
   bot:
     build:
       dockerfile: docker/dockerfiles/bot/Dockerfile
-    container_name: idrofobia_bot
     depends_on:
       - database
-      - cache
-    networks:
-      - directus
+      - bot_cache
   
-  cache:
+  bot_cache:
     image: redis:7
-    networks:
-      - directus
     command: ['redis-server', '--save', '60', '1', '--appendonly', 'yes']
-    
-networks:
-  directus:

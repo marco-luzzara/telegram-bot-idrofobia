@@ -7,16 +7,26 @@ services:
       - ./docker/volumes/db/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=test123
+    networks:
+      - idrofobia_network
 
   bot:
     build:
       context: .
+    container_name: idrofobia_bot
     volumes:
       - ./config/production.json:/app/config/production.json
+    networks:
+      - idrofobia_network
 
-  cache:
+  bot_cache:
     ports:
       - 6379:6379
     container_name: idrofobia_cache
     volumes:
       - ./docker/volumes/cache/data:/data
+    networks:
+      - idrofobia_network
+
+networks:
+  idrofobia_network:
