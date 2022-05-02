@@ -17,7 +17,7 @@
         "start_game": "Fai cominciare la partita"
     },
     "errors": {
-        "wrongKillCodeFormat": "Il kill code che hai inserito non è corretto. Deve contenere 10 caratteri tra lettere maiuscole e cifre",
+        "wrongKillCodeFormat": "Il kill code che hai inserito non è corretto. Deve contenere 10 caratteri tra lettere maiuscole e cifre. Rilancia il comando inserendo un kill code valido",
         "wrongTimespanFormat": "Formato errato (dd:hh:mm)"
     },
     "notifications": {

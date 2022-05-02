@@ -9,13 +9,20 @@ const killTargetScene = new Scenes.BaseScene<AppContext>(KILL_TARGET_SCENE)
 killTargetScene.enter(async (ctx) => {
     await ctx.reply(Messages.responses.requestForTargetKillCode)
 });
+
 killTargetScene.on('text', async (ctx) => {
     const killCode = ctx.message.text.toUpperCase()
     const service = getUserService(ctx)
 
-    await service.killUserTarget(ctx.from.username, killCode)
-
-    await ctx.scene.leave()
+    try {
+        await service.killUserTarget(ctx.from.username, killCode)
+    }
+    catch (err) {
+        throw err
+    }
+    finally {
+        await ctx.scene.leave()
+    }
 });
 
 export default killTargetScene
