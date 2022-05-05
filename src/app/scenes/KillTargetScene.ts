@@ -14,15 +14,7 @@ killTargetScene.on('text', async (ctx) => {
     const killCode = ctx.message.text.toUpperCase()
     const service = getUserService(ctx)
 
-    try {
-        await service.killUserTarget(ctx.from.username, killCode)
-    }
-    catch (err) {
-        throw err
-    }
-    finally {
-        await ctx.scene.leave()
-    }
+    await service.killUserTarget(ctx.from.username, killCode)
 });
 
 export default killTargetScene

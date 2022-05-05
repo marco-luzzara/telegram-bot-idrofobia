@@ -3,8 +3,7 @@ out/
 scripts/envs/*
 !/scripts/envs/sample.env
 docker/volumes/
-config/*
-!/config/test.json
+config/production.json
 .vscode/
 
 # Logs

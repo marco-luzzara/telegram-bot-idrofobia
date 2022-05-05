@@ -4,6 +4,7 @@ import { Messages } from "../infrastructure/utilities/GlobalizationUtil";
 import config from 'config'
 import ValidationError from "../infrastructure/errors/ValidationError";
 import RedisUsernameMapping from "../services/mapping/RedisUsernameMapping";
+import AppContext from "./types/AppContext";
 
 export async function initializeBotCommands(bot: Telegraf): Promise<{ [key: string]: BotCommand }> {
     const killTargetCommand: BotCommand = {
@@ -65,7 +66,7 @@ export async function initializeBotCommands(bot: Telegraf): Promise<{ [key: stri
 }
 
 export function injectErrorHandler(bot: Telegraf): Telegraf {
-    bot.catch(async (err: Error, ctx) => {
+    bot.catch(async (err: Error, ctx: AppContext) => {
         if (err instanceof ValidationError)
             await ctx.reply(err.message)
         else
@@ -74,6 +75,9 @@ export function injectErrorHandler(bot: Telegraf): Telegraf {
                 {
                     parse_mode: 'HTML'
                 })
+        
+        if (ctx.scene.current !== undefined)
+            await ctx.scene.leave()
     })
 
     return bot
