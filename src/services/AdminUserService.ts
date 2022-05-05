@@ -112,4 +112,36 @@ export default class AdminUserService {
         await this.notificationService.sendMessage(adminGroupId, 
             NotificationMessages.IdleUsersKilledSuccessfully)
     }
+
+    /**
+     * send a custom message to the specified players
+     * @param message 
+     * @param receiverType a type that identify a group of users
+     */
+    async sendMessageToUsers(adminGroupId: number, message: string, receiverType: MessageReceiverType): Promise<void> {
+        let userIter: AsyncGenerator<PlayingUser, any, undefined>
+        switch(receiverType) {
+            case MessageReceiverType.AllLivingUsers:
+                userIter = this.userRepo.getAllLivingUsers()
+                break
+            case MessageReceiverType.AllUsers:
+                userIter = this.userRepo.getAllUsers()
+                break
+            default:
+                throw new Error(`sendMessageToUsers does not handle the receiverType ${MessageReceiverType[receiverType]}`)
+        }
+
+        for await (const player of userIter) {
+            await this.notificationService.sendCustomMessage(
+                player.userInfo.telegramId.toString(), message)
+        }
+
+        await this.notificationService.sendMessage(adminGroupId, 
+            NotificationMessages.MessageSentToTheUsers)
+    }
+}
+
+export enum MessageReceiverType {
+    AllUsers,
+    AllLivingUsers
 }

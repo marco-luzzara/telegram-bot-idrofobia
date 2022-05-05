@@ -1,5 +1,4 @@
 import config from 'config'
-import { assert } from 'console'
 import { format } from 'util'
 
 const language = config.Bot.language

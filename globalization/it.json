@@ -14,7 +14,8 @@
         "get_status": "Chiedi il tuo kill code e le informazioni sul tuo target",
         "kill_idle_players": "Uccidi tutti i giocatori che sono inattivi",
         "kill_user": "Uccidi un giocatore",
-        "start_game": "Fai cominciare la partita"
+        "start_game": "Fai cominciare la partita",
+        "send_message_to_users": "Manda un messaggio a un gruppo di utenti"
     },
     "errors": {
         "wrongKillCodeFormat": "Il kill code che hai inserito non è corretto. Deve contenere 10 caratteri tra lettere maiuscole e cifre. Rilancia il comando inserendo un kill code valido",
@@ -39,6 +40,7 @@
 
         "AskToUserForKillResult": "Assicurati che l'utente sia davvero morto",
         "GameStartedSuccessfully": "è appena iniziata una nuova partita",
-        "IdleUsersKilledSuccessfully": "Gli utenti inattivi sono stati uccisi"
+        "IdleUsersKilledSuccessfully": "Gli utenti inattivi sono stati uccisi",
+        "MessageSentToTheUsers": "Gli utenti selezionati hanno ricevuto il messaggio"
     }
 }
