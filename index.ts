@@ -7,6 +7,7 @@ import killTargetScene from './src/app/scenes/KillTargetScene'
 import killIdlePlayersScene from './src/app/scenes/KillIdlePlayersScene'
 import killUserScene from './src/app/scenes/KillUserScene'
 import startGameScene from './src/app/scenes/StartGameScene'
+import sendMessageToUsersScene from './src/app/scenes/SendMessageToUsersScene'
 import { getUserService } from './src/app/factories/ServiceFactory';
 
 const bot = new Telegraf<AppContext>(config.Bot.token)
@@ -24,7 +25,8 @@ const stage = new Scenes.Stage<AppContext>([
         killTargetScene, 
         killIdlePlayersScene,
         killUserScene,
-        startGameScene
+        startGameScene,
+        sendMessageToUsersScene
     ])
 bot.use(session())
 injectMiddlewareForChatIdStorage(bot)
@@ -49,6 +51,10 @@ bot.command(commands.killUserCommand.command, async (ctx) => {
 
 bot.command(commands.startGameCommand.command, async (ctx) => {
     await ctx.scene.enter(startGameScene.id)
+});
+
+bot.command(commands.sendMessageToUsersCommand.command, async (ctx) => {
+    await ctx.scene.enter(sendMessageToUsersScene.id)
 });
 
 injectErrorHandler(bot)

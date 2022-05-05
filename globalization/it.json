@@ -7,7 +7,9 @@
         "confirmIdlePlayersKill": "Per confermare l'uccisione dei giocatori inattivi per un tempo di (Giorni: %d, Ore: %d, Minuti: %d), clicca qui sotto",
         "requestForUsernameToKill": "Inserisci l'username della persona da uccidere",
         "confirmUserToKill": "Per confermare l'uccisione del giocatore %s, clicca qui sotto",
-        "confirmToStartTheGame": "Sei sicuro di voler far partire (o ricominciare) il gioco?"
+        "confirmToStartTheGame": "Sei sicuro di voler far partire (o ricominciare) il gioco?",
+        "requestForMessageReceiver": "A chi vuoi mandare il messaggio?",
+        "requestForMessage": "Scrivi il messaggio da mandare agli utenti"
     },
     "commandDescriptions": {
         "kill_target": "Uccidi il tuo target usando il suo kill code",

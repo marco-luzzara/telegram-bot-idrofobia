@@ -38,7 +38,13 @@ export async function initializeBotCommands(bot: Telegraf): Promise<{ [key: stri
         description: Messages.commandDescriptions.start_game
     }
 
-    await bot.telegram.setMyCommands([killIdlePlayersCommand, killUserCommand, startGameCommand], 
+    const sendMessageToUsersCommand: BotCommand = {
+        command: 'send_message_to_users',
+        description: Messages.commandDescriptions.send_message_to_users
+    }
+
+    await bot.telegram.setMyCommands([killIdlePlayersCommand, killUserCommand, 
+        startGameCommand, sendMessageToUsersCommand], 
         { 
             scope: { 
                 type: "chat_administrators",
@@ -53,7 +59,8 @@ export async function initializeBotCommands(bot: Telegraf): Promise<{ [key: stri
         // admin only
         killIdlePlayersCommand,
         killUserCommand,
-        startGameCommand
+        startGameCommand,
+        sendMessageToUsersCommand
     }
 }
 
