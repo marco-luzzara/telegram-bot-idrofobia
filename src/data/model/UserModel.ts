@@ -63,6 +63,7 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
     declare lastKill: Date | null
     declare profilePictureUrl: string
     declare killCode: string
+    declare killCount: number
 
     declare getUser: BelongsToGetAssociationMixin<UserModel>;
     declare setUser: BelongsToSetAssociationMixin<UserModel, number>;
@@ -105,7 +106,8 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
         const playingUser = new PlayingUser(
             userInfo,
             userTarget,
-            this.lastKill)
+            this.lastKill,
+            this.killCount)
         playingUser.id = this.id
 
         return playingUser
@@ -113,7 +115,8 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
 
     static getModelDataFromDomainUser(playingUser: PlayingUser): any {
         const localData = {
-            lastKill: playingUser.lastKill
+            lastKill: playingUser.lastKill,
+            killCount: playingUser.killCount
         }
 
         return types.isProxy(playingUser.target) ? 
@@ -154,6 +157,12 @@ PlayingUserModel.init(
                 type: DataTypes.CHAR(10),
                 allowNull: false,
                 field: 'kill_code'
+            },
+            killCount: {
+                type: DataTypes.INTEGER,
+                allowNull: false,
+                field: 'kill_count',
+                defaultValue: 0
             }
         },
         {   

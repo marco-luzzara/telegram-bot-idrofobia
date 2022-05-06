@@ -16,15 +16,18 @@ export default class PlayingUser {
     readonly userInfo: UserInfo
     target: PlayingUser
     lastKill: Date
+    killCount: number
 
     constructor(
         userInfo: UserInfo, 
         target: PlayingUser, 
-        lastKill: Date) 
+        lastKill: Date,
+        killCount: number) 
     {
         this.userInfo = userInfo
         this.target = target
         this.lastKill = lastKill
+        this.killCount = killCount
     }
 
     killTarget(killCode: KillCode): KillTargetResult {
@@ -46,18 +49,14 @@ export default class PlayingUser {
         this.target = killedUserTarget
 
         this.lastKill = new Date()
+        this.killCount++
+
         return KillTargetResult.KillTargetSuccessful
     }
 
     startPlaying(startGameDate: Date) {
         this.lastKill = startGameDate
-    }
-
-    stopPlaying() {
-        assert(this.isPlaying(), 'the user cannot stop playing if he is not playing yet')
-        
-        this.target = null
-        this.lastKill = null
+        this.killCount = 0
     }
 
     die() {

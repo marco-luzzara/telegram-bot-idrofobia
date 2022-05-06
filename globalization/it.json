@@ -37,7 +37,7 @@
 
         "UserStatusDead": "Sei morto",
         "UserStatusWinner": "Hai vinto",
-        "UserStatusPlaying": "Il tuo KillCode: %s\nData dell'ultima kill: %s",
+        "UserStatusPlaying": "Il tuo KillCode: %s\nData dell'ultima kill: %s\nContatore di kill: %s",
         "UserStatusTargetInfo": "Nome del target: %s\nIndirizzo del target: %s",
 
         "AskToUserForKillResult": "Assicurati che l'utente sia davvero morto",

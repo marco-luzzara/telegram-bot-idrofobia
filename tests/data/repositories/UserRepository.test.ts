@@ -174,10 +174,12 @@ describe('saveExistingUsers', () => {
         const user = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'))
         
         user.lastKill = new Date(2000, 12, 1)
+        user.killCount = 4
         await repo.saveExistingUsers(user)
     
         const updatedUser = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user1'))
         expect(updatedUser.lastKill).toEqual(new Date(2000, 12, 1))
+        expect(updatedUser.killCount).toBe(4)
     });
     
     test(`given a user with a null target, when i want to reassign the target, 

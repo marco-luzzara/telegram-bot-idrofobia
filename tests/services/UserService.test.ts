@@ -1,5 +1,5 @@
 import { dbInstance } from '../../src/infrastructure/storage/DbConnection'
-import { seedDbWithRingOfNPlayers } from '../utils/factories/DbPlayingUserFactory'
+import { createFakePlayingUserDbObject, seedDbWithRingOfNPlayers } from '../utils/factories/DbPlayingUserFactory'
 import IUserRepository from '../../src/data/repositories/interfaces/IUserRepository'
 import UserRepository from '../../src/data/repositories/UserRepository'
 import UserService from '../../src/services/UserService'
@@ -42,11 +42,9 @@ describe('killUserTarget', () => {
     test(`given a non-playing user, when he tries to kill a target, 
         it cannot because he is not playing`, async () => 
     {
-        await seedDbWithRingOfNPlayers(3)
+        await createFakePlayingUserDbObject('user0')
+        await createFakePlayingUserDbObject('user1')
         const userTId = generateTelegramIdFromSeed('user0').toString()
-        const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed(userTId), 1)
-        user0.stopPlaying()
-        await repo.saveExistingUsers(user0)
         
         await service.killUserTarget(userTId, 
             generateKillCodeFromSeed('user1').toString())
@@ -99,7 +97,7 @@ describe('killUserTarget', () => {
                 NotificationMessages.UserIsDead)
         expect(mockNotificationService.sendMessage)
             .toHaveBeenCalledWith(killerTId, NotificationMessages.UserStatusPlaying, 
-                generateKillCodeFromSeed('user1').toString(), expect.anything())
+                generateKillCodeFromSeed('user1').toString(), expect.anything(), '1')
     });
 
     test(`given a playing user, when the killcode he inserts to kill the target is wrong, 
@@ -132,11 +130,8 @@ describe('getUserStatus', () => {
     test(`given a non-playing user, when he asks for the status, 
         he receives game not started`, async () => 
     {
-        await seedDbWithRingOfNPlayers(3)
+        await createFakePlayingUserDbObject('user0')
         const userTId = generateTelegramIdFromSeed('user0').toString()
-        const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed(userTId), 1)
-        user0.stopPlaying()
-        await repo.saveExistingUsers(user0)
         
         await service.getUserStatus(userTId)
 
@@ -145,7 +140,7 @@ describe('getUserStatus', () => {
     });
 
     test(`given a playing user, when he asks for the status, 
-        he receives messages containing lastKill, kill code and target info`, async () => 
+        he receives 2 messages containing his own and target info`, async () => 
     {
         await seedDbWithRingOfNPlayers(3)
         const userTId = generateTelegramIdFromSeed('user1').toString()
@@ -154,7 +149,7 @@ describe('getUserStatus', () => {
 
         expect(mockNotificationService.sendMessage)
             .toHaveBeenCalledWith(userTId, NotificationMessages.UserStatusPlaying,
-                expect.anything(), expect.anything())
+                expect.anything(), expect.anything(), '0')
         expect(mockNotificationService.sendPicture)
             .toHaveBeenCalledWith(userTId, NotificationMessages.UserStatusTargetInfo,
                 expect.anything(), expect.anything(), expect.anything())

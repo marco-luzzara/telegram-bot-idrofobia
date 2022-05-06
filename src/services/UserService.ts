@@ -80,7 +80,8 @@ export default class UserService {
             NotificationMessages.UserStatusPlaying, 
             // params
             user.userInfo.killCode.toString(),
-            user.lastKill.toUTCString())
+            user.lastKill.toUTCString(),
+            user.killCount.toString())
         await this.notificationService.sendPicture(telegramId, 
             NotificationMessages.UserStatusTargetInfo, 
             target.userInfo.profilePictureUrl, 

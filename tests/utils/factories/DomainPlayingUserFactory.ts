@@ -14,7 +14,8 @@ export function createFakeUser(
 {
     return new PlayingUser(createFakeUserInfo(playingUserInfo.seed), 
         playingUserInfo.target ?? null, 
-        playingUserInfo.lastKill ?? new Date())
+        playingUserInfo.lastKill ?? new Date(),
+        0)
 }
 
 /**
