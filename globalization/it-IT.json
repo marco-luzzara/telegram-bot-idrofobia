@@ -4,7 +4,6 @@
         "helpMessage": "Qua ti spiego come funziona e cosa puoi fare",
         "requestForTargetKillCode": "Ora inserisci il kill code che il tuo target ti ha dato",
         "requestForTimespan": "Inserisci il tempo massimo di inattività utilizzando il formato dd:hh:mm. Per esempio 02:03:04 sta per 2 giorni, 3 ore e 4 minuti",
-        "confirmIdlePlayersKill": "Per confermare l'uccisione dei giocatori inattivi per un tempo di (Giorni: %d, Ore: %d, Minuti: %d), clicca qui sotto",
         "requestForUsernameToKill": "Inserisci l'username della persona da uccidere",
         "confirmUserToKill": "Per confermare l'uccisione del giocatore %s, clicca qui sotto",
         "confirmToStartTheGame": "Sei sicuro di voler far partire (o ricominciare) il gioco?",
@@ -14,7 +13,7 @@
     "commandDescriptions": {
         "kill_target": "Uccidi il tuo target usando il suo kill code",
         "get_status": "Chiedi il tuo kill code e le informazioni sul tuo target",
-        "kill_idle_players": "Uccidi tutti i giocatori che sono inattivi",
+        "get_idle_players": "Ritorna tutti i giocatori che sono inattivi",
         "kill_user": "Uccidi un giocatore",
         "start_game": "Fai cominciare la partita",
         "send_message_to_users": "Manda un messaggio a un gruppo di utenti"

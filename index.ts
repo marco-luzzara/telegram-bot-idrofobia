@@ -4,7 +4,7 @@ import { Messages } from './src/infrastructure/utilities/GlobalizationUtil';
 import { initializeBotCommands, injectErrorHandler, injectMiddlewareForChatIdStorage } from './src/app/BotInitializer';
 import AppContext from './src/app/types/AppContext'
 import killTargetScene from './src/app/scenes/KillTargetScene'
-import killIdlePlayersScene from './src/app/scenes/KillIdlePlayersScene'
+import getIdlePlayersScene from './src/app/scenes/getIdlePlayersScene'
 import killUserScene from './src/app/scenes/KillUserScene'
 import startGameScene from './src/app/scenes/StartGameScene'
 import sendMessageToUsersScene from './src/app/scenes/SendMessageToUsersScene'
@@ -23,7 +23,7 @@ bot.help(async (ctx) => {
 
 const stage = new Scenes.Stage<AppContext>([
         killTargetScene, 
-        killIdlePlayersScene,
+        getIdlePlayersScene,
         killUserScene,
         startGameScene,
         sendMessageToUsersScene
@@ -41,8 +41,8 @@ bot.command(commands.getStatusCommand.command, async (ctx) => {
     await service.getUserStatus(ctx.from.username)
 });
 
-bot.command(commands.killIdlePlayersCommand.command, async (ctx) => {
-    await ctx.scene.enter(killIdlePlayersScene.id)
+bot.command(commands.getIdlePlayersCommand.command, async (ctx) => {
+    await ctx.scene.enter(getIdlePlayersScene.id)
 });
 
 bot.command(commands.killUserCommand.command, async (ctx) => {
