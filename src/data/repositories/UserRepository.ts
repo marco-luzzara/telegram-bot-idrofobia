@@ -41,6 +41,22 @@ export default class UserRepository implements IUserRepository {
         })
     }
 
+    async * getPlayersInRing(): AsyncGenerator<PlayingUser, any, undefined> {
+        const optionalFirstPlayer = await this.getAllLivingUsers().next()
+        if (optionalFirstPlayer.done)
+            return
+
+        let curUser = await this.getUserByTelegramId(
+            (optionalFirstPlayer.value as PlayingUser).userInfo.telegramId, 1)
+        const initialId = curUser.id
+
+        yield curUser
+        while (curUser.target.id !== initialId) {
+            curUser = await this.getUserByTelegramId(curUser.target.userInfo.telegramId, 1)
+            yield curUser
+        }
+    }
+
     async getUserFromTargetTId(telegramId: TelegramId, nestedLevel: number): Promise<PlayingUser> {
         assert(nestedLevel >= 1, 'cannot check the telegramId if you do not load the associated target')
         const includeOption = this.createRecursiveIncludeOption(nestedLevel)

@@ -1,5 +1,6 @@
 import * as timespan from "timespan"
 
+import { BotLanguage } from '../infrastructure/utilities/GlobalizationUtil'
 import TelegramId from '../model/custom_types/TelegramId';
 import IUserRepository from '../data/repositories/interfaces/IUserRepository'
 import PlayingUser from '../model/domain/PlayingUser';
@@ -73,44 +74,29 @@ export default class AdminUserService {
     }
 
     /**
-     * kill those players that have not killed their target within the `idleTimeSpan` time.
-     * these players are called idle players.
+     * get a list of those player that have not killed their target within the `idleTimeSpan` time.
+     * these players are called idle players and are listed as (Id, telegram Id, target Id, last kill)
      * @param adminGroupId the group id of the admin group
      * @param idleTimeSpan the maximum amount of time a player can play without killing anyone
      */
-    async killIdlePlayers(adminGroupId: number, idleTimeSpan: timespan.TimeSpan): Promise<void> {
-        let firstNotIdle: PlayingUser = undefined
-        let previousNotIdle: PlayingUser = undefined
+    async getIdlePlayers(adminGroupId: number, idleTimeSpan: timespan.TimeSpan): Promise<void> {
+        let stringBuilder = ''
+        let params: string[] = []
         const idleCheckTime = new Date()
 
-        for await (let player of this.userRepo.getAllLivingUsers()) {
+        for await (let player of this.userRepo.getPlayersInRing()) {
             if (player.isIdle(idleCheckTime, idleTimeSpan)) {
-                player.die()
-                await this.userRepo.saveExistingUsers(player)
-                this.notificationService.sendMessage(player.userInfo.telegramId.toString(),
-                    NotificationMessages.UserIsDeadBecauseOfIdleness)
-                continue
+                stringBuilder += "Id: %s, Telegram Id: @%s, Target Id: %s, Last Kill: %s\n\n"
+                params.push(player.id.toString(), player.userInfo.telegramId.toString(),
+                    player.target.id.toString(), player.lastKill.toLocaleString(BotLanguage))
             }
-
-            if (firstNotIdle === undefined) {
-                firstNotIdle = previousNotIdle = player
-                continue
-            }
-
-            previousNotIdle.target = player
-            await this.userRepo.saveExistingUsers(previousNotIdle)
-            await this.userService.getUserStatus(previousNotIdle.userInfo.telegramId.toString())
-            previousNotIdle = player
         }
 
-        if (previousNotIdle !== undefined) {
-            previousNotIdle.target = firstNotIdle
-            await this.userRepo.saveExistingUsers(previousNotIdle)
-            await this.userService.getUserStatus(previousNotIdle.userInfo.telegramId.toString())
-        }
-
-        await this.notificationService.sendMessage(adminGroupId, 
-            NotificationMessages.IdleUsersKilledSuccessfully)
+        if (stringBuilder === '')
+            this.notificationService.sendMessage(adminGroupId, NotificationMessages.NoUserIdle)
+        else
+            this.notificationService.sendCustomMessage(adminGroupId, 
+                stringBuilder.slice(0, -2), ...params)
     }
 
     /**

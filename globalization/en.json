@@ -1,5 +1,0 @@
-{
-    "errors": {
-        "unauthorized_user": "The user $1 cannot access the service"
-    }
-}

@@ -14,4 +14,5 @@ export function getFormattedMessage(section: string, messageId: string,
     return format(message, ...params)
 }
 
+export { language as BotLanguage }
 export { messages as Messages }

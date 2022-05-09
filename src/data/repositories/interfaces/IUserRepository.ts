@@ -21,6 +21,12 @@ export default interface IUserRepository {
     getAllLivingUsers(): AsyncGenerator<PlayingUser, any, undefined>;
 
     /**
+     * get all the players that are actually playing starting from any player
+     * but in the order specified by the target association
+     */
+    getPlayersInRing(): AsyncGenerator<PlayingUser, any, undefined>;
+
+    /**
      * retrieve the user given the telegram id of his target. null if the telegram id 
      * is not found or if the user is alread dead
      * @param telegramId 

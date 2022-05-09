@@ -20,8 +20,8 @@ const enum NotificationMessages {
     // admin
     AskToUserForKillResult = 'AskToUserForKillResult',
     GameStartedSuccessfully = 'GameStartedSuccessfully',
-    IdleUsersKilledSuccessfully = 'IdleUsersKilledSuccessfully',
-    MessageSentToTheUsers = 'MessageSentToTheUsers' 
+    MessageSentToTheUsers = 'MessageSentToTheUsers',
+    NoUserIdle = "NoUserIdle"
 }
 
 export default NotificationMessages

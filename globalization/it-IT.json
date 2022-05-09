@@ -27,7 +27,6 @@
         "KillTargetSuccessful": "Hai ucciso il tuo target, complimenti!",
         "GameStarted": "è appena cominciata una nuova partita",
         "UserIsDead": "Sei appena stato ucciso",
-        "UserIsDeadBecauseOfIdleness": "Sei morto perchè è da troppo tempo che non uccidi nessuno",
         
         "GameNotStartedYet": "Il gioco deve ancora cominciare",
         "UnregisteredUser": "Non sei iscritto ad idrofobia",
@@ -42,7 +41,7 @@
 
         "AskToUserForKillResult": "Assicurati che l'utente sia davvero morto",
         "GameStartedSuccessfully": "è appena iniziata una nuova partita",
-        "IdleUsersKilledSuccessfully": "Gli utenti inattivi sono stati uccisi",
-        "MessageSentToTheUsers": "Gli utenti selezionati hanno ricevuto il messaggio"
+        "MessageSentToTheUsers": "Gli utenti selezionati hanno ricevuto il messaggio",
+        "NoUserIdle": "Nessun utente è inattivo"
     }
 }

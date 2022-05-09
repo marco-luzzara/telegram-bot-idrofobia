@@ -4,6 +4,8 @@ import IUserRepository from '../../../src/data/repositories/interfaces/IUserRepo
 import { generateTelegramIdFromSeed } from '../../utils/factories/TelegramIdFactory'
 import { createFakePlayingUserDbObject } from '../../utils/factories/DbPlayingUserFactory'
 import { seedDbWithRingOfNPlayers } from '../../utils/factories/DbPlayingUserFactory'
+import { generateKillCodeFromSeed } from '../../utils/factories/KillCodeFactory'
+import PlayingUser from '../../../src/model/domain/PlayingUser'
 
 let repo: IUserRepository = null
 
@@ -165,6 +167,49 @@ describe('getUserFromTargetTId', () => {
 
         expect(player.target.userInfo.telegramId).toEqual(targetTId)
         expect(player.target.target.userInfo.telegramId).toEqual(generateTelegramIdFromSeed('user2'))
+    });
+});
+
+describe('getPlayersInRing', () => {
+    test('given any players playing, when getPlayersInRing, it returns zero elements', async () => {
+        await createFakePlayingUserDbObject('user0')
+        await createFakePlayingUserDbObject('user1')
+
+        for await (const player of repo.getPlayersInRing()) {
+            fail('there should be no users returned')
+        }
+    });
+
+    test('given only one player playing, when getPlayersInRing, returns the player', async () => {
+        await seedDbWithRingOfNPlayers(2)
+        const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 2)
+        const user1 = user0.target
+        user0.killTarget(generateKillCodeFromSeed('user1'))
+        await repo.saveExistingUsers(user0, user1)
+
+        for await (const player of repo.getPlayersInRing()) {
+            expect(player.userInfo.telegramId).toEqual(generateTelegramIdFromSeed('user0'))
+        }
+    });
+
+    test(`given many users playing and some not, when getPlayersInRing, 
+        returns all the players playing starting from any player`, async () => {
+        await seedDbWithRingOfNPlayers(3)
+        const user0 = await repo.getUserByTelegramId(generateTelegramIdFromSeed('user0'), 2)
+        const user1 = user0.target
+        user0.killTarget(generateKillCodeFromSeed('user1'))
+        await repo.saveExistingUsers(user0, user1)
+
+        let players: PlayingUser[] = []
+        for await (const player of repo.getPlayersInRing()) {
+            players.push(player)
+        }
+
+        expect(players.length).toBe(2)
+        expect(players.map(p => p.userInfo.telegramId))
+            .toEqual(expect.arrayContaining([
+                generateTelegramIdFromSeed('user0'), 
+                generateTelegramIdFromSeed('user2')]))
     });
 });
 
