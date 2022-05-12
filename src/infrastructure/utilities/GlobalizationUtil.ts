@@ -1,8 +1,9 @@
 import config from 'config'
 import { format } from 'util'
 
-const language = config.Bot.language
-const { default: messages } = await import(`../../../globalization/${language}.json`, 
+const locale = config.Bot.locale
+const timeZone = config.Bot.timeZone
+const { default: messages } = await import(`../../../globalization/${locale}.json`, 
     {
         assert: { type: 'json' }
     })
@@ -14,5 +15,6 @@ export function getFormattedMessage(section: string, messageId: string,
     return format(message, ...params)
 }
 
-export { language as BotLanguage }
+export { timeZone as BotTimeZone }
+export { locale as BotLocale }
 export { messages as Messages }

@@ -64,6 +64,13 @@ export default class PlayingUser {
         this.target = null
     }
 
+    getFormattedLastKill(locale?: string, timeZone?: string) {
+        const defaultOptions = Intl.DateTimeFormat().resolvedOptions()
+        const localeOrDefault = locale ?? defaultOptions.locale
+        const timeZoneOrDefault = timeZone ?? defaultOptions.timeZone
+        return this.lastKill.toLocaleString(localeOrDefault, { timeZone: timeZoneOrDefault })
+    }
+
     hasKillCode(killCode: KillCode): boolean {
         return killCode.toString() === this.userInfo.killCode.toString()
     }

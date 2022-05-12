@@ -7,7 +7,8 @@
         "token": "test_token",
         "id": "bot",
         "adminGroupId": 100000000,
-        "language": "it-IT"
+        "locale": "it-IT",
+        "timeZone": "Europe/Rome"
     },
     "Redis": {
         "url": "redis://localhost:6379"

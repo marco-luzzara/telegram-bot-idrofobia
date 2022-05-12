@@ -1,6 +1,6 @@
 import * as timespan from "timespan"
 
-import { BotLanguage } from '../infrastructure/utilities/GlobalizationUtil'
+import { BotLocale, BotTimeZone } from '../infrastructure/utilities/GlobalizationUtil'
 import TelegramId from '../model/custom_types/TelegramId';
 import IUserRepository from '../data/repositories/interfaces/IUserRepository'
 import PlayingUser from '../model/domain/PlayingUser';
@@ -88,7 +88,7 @@ export default class AdminUserService {
             if (player.isIdle(idleCheckTime, idleTimeSpan)) {
                 stringBuilder += "Id: %s, Telegram Id: @%s, Target Id: %s, Last Kill: %s\n\n"
                 params.push(player.id.toString(), player.userInfo.telegramId.toString(),
-                    player.target.id.toString(), player.lastKill.toLocaleString(BotLanguage))
+                    player.target.id.toString(), player.getFormattedLastKill(BotLocale, BotTimeZone))
             }
         }
 

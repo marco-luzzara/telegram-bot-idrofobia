@@ -4,6 +4,7 @@ import KillCode from '../model/custom_types/KillCode';
 import PlayingUser, { KillTargetResult } from '../model/domain/PlayingUser';
 import INotificationService from './notification/INotificationService'
 import NotificationMessages from './notification/NotificationMessages'
+import { BotLocale, BotTimeZone } from '../infrastructure/utilities/GlobalizationUtil';
 
 export default class UserService {
     private readonly repo: IUserRepository
@@ -80,7 +81,7 @@ export default class UserService {
             NotificationMessages.UserStatusPlaying, 
             // params
             user.userInfo.killCode.toString(),
-            user.lastKill.toUTCString(),
+            user.getFormattedLastKill(BotLocale, BotTimeZone),
             user.killCount.toString())
         await this.notificationService.sendPicture(telegramId, 
             NotificationMessages.UserStatusTargetInfo, 
