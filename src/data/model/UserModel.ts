@@ -1,7 +1,9 @@
-import Sequelize, { BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin, 
-        BelongsToSetAssociationMixin, CreationOptional, 
-        HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes, 
-        InferCreationAttributes, NonAttribute } from 'sequelize'
+import Sequelize, {
+    BelongsToCreateAssociationMixin, BelongsToGetAssociationMixin,
+    BelongsToSetAssociationMixin, CreationOptional,
+    HasOneGetAssociationMixin, HasOneSetAssociationMixin, InferAttributes,
+    InferCreationAttributes, NonAttribute
+} from 'sequelize'
 const { DataTypes, Model } = Sequelize
 
 import { types } from 'util'
@@ -12,9 +14,9 @@ import TelegramId from '../../model/custom_types/TelegramId'
 import UserInfo from '../../model/custom_types/UserInfo'
 import PlayingUser from '../../model/domain/PlayingUser'
 import { dbInstance as sequelize } from '../../infrastructure/storage/DbConnection'
-
-class UserModel extends Model<InferAttributes<UserModel>, 
-    InferCreationAttributes<UserModel>> 
+//@ts-ignore
+class UserModel extends Model<InferAttributes<UserModel>,
+    InferCreationAttributes<UserModel>>
 {
     declare id: CreationOptional<number>
     declare name: string
@@ -23,40 +25,41 @@ class UserModel extends Model<InferAttributes<UserModel>,
 }
 
 UserModel.init(
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                autoIncrement: true,
-                field: 'id'
-            },
-            name: {
-                type: DataTypes.STRING(100),
-                allowNull: false,
-                field: 'name'
-            },
-            surname: {
-                type: DataTypes.STRING(100),
-                allowNull: false,
-                field: 'surname'
-            },
-            address: {
-                type: DataTypes.STRING(100),
-                allowNull: false,
-                field: 'address'
-            },
-
+    {
+        //@ts-ignore
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            autoIncrement: true,
+            field: 'id'
         },
-        {
-            sequelize,
-            modelName: 'user',
-            tableName: 'players',
-            timestamps: false
-        }
-    );
+        name: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+            field: 'name'
+        },
+        surname: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+            field: 'surname'
+        },
+        address: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+            field: 'address'
+        },
 
-class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>, 
-    InferCreationAttributes<PlayingUserModel>> 
+    },
+    {
+        sequelize,
+        modelName: 'user',
+        tableName: 'players',
+        timestamps: false
+    }
+);
+//@ts-ignore
+class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
+    InferCreationAttributes<PlayingUserModel>>
 {
     declare id: number
     declare telegramId: string
@@ -77,13 +80,13 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
 
     getUserInfo(userModel: UserModel): UserInfo {
         return new UserInfo(
-                userModel.name, 
-                userModel.surname, 
-                userModel.address, 
-                new URL(this.profilePictureUrl),
-                new TelegramId(this.telegramId),
-                new KillCode(this.killCode)
-            )
+            userModel.name,
+            userModel.surname,
+            userModel.address,
+            new URL(this.profilePictureUrl),
+            new TelegramId(this.telegramId),
+            new KillCode(this.killCode)
+        )
     }
 
     /**
@@ -97,11 +100,11 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
         // if i try to access a target that i have not loaded with eager loading,
         // then it throws. in this way i must set in advance the number of targets 
         // i need to load
-        const userTarget = this.targetUser === undefined ? 
-        createThrowingProxy<PlayingUser>() :
+        const userTarget = this.targetUser === undefined ?
+            createThrowingProxy<PlayingUser>() :
             this.targetUser === null ? null :
                 this.targetUser.getPlayingUser(nestedLevel - 1)
-        
+
         const userInfo = this.getUserInfo(this.user)
         const playingUser = new PlayingUser(
             userInfo,
@@ -119,9 +122,9 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
             killCount: playingUser.killCount
         }
 
-        return types.isProxy(playingUser.target) ? 
-            localData : 
-            { 
+        return types.isProxy(playingUser.target) ?
+            localData :
+            {
                 ...localData,
                 target: playingUser.target?.id ?? null
             }
@@ -129,49 +132,49 @@ class PlayingUserModel extends Model<InferAttributes<PlayingUserModel>,
 }
 
 PlayingUserModel.init(
-        {
-            id: {
-                type: DataTypes.INTEGER,
-                primaryKey: true,
-                field: 'id'
-            },
-            telegramId: {
-                type: DataTypes.STRING(100),
-                allowNull: false,
-                field: 'telegram_id',
-                unique: true
-            },
-            lastKill: {
-                type: DataTypes.DATE,
-                field: 'last_kill'
-            },
-            profilePictureUrl: {
-                type: DataTypes.STRING(2048),
-                allowNull: false,
-                validate: {
-                    isUrl: true
-                },
-                field: 'profile_picture_url'
-            },
-            killCode: {
-                type: DataTypes.CHAR(10),
-                allowNull: false,
-                field: 'kill_code'
-            },
-            killCount: {
-                type: DataTypes.INTEGER,
-                allowNull: false,
-                field: 'kill_count',
-                defaultValue: 0
-            }
+    {
+        id: {
+            type: DataTypes.INTEGER,
+            primaryKey: true,
+            field: 'id'
         },
-        {   
-            sequelize, 
-            modelName: 'playingUser',
-            tableName: 'idrofobia_players',
-            timestamps: false
+        telegramId: {
+            type: DataTypes.STRING(100),
+            allowNull: false,
+            field: 'telegram_id',
+            unique: true
+        },
+        lastKill: {
+            type: DataTypes.DATE,
+            field: 'last_kill'
+        },
+        profilePictureUrl: {
+            type: DataTypes.STRING(2048),
+            allowNull: false,
+            validate: {
+                isUrl: true
+            },
+            field: 'profile_picture_url'
+        },
+        killCode: {
+            type: DataTypes.CHAR(10),
+            allowNull: false,
+            field: 'kill_code'
+        },
+        killCount: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            field: 'kill_count',
+            defaultValue: 0
         }
-    );
+    },
+    {
+        sequelize,
+        modelName: 'playingUser',
+        tableName: 'idrofobia_players',
+        timestamps: false
+    }
+);
 
 PlayingUserModel.belongsTo(UserModel, { foreignKey: 'id' });
 

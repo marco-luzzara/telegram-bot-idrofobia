@@ -9,8 +9,8 @@ docker-compose -f ./docker/docker-compose.base.yml \
 sleep 5
 
 docker exec idrofobia_db psql -U postgres -c '\x' -c "
-    DROP TABLE idrofobia_players;
-    DROP TABLE players;
+    DROP TABLE IF EXISTS idrofobia_players;
+    DROP TABLE IF EXISTS players;
 
     $(cat ./scripts/db/create_schema.sql)
 
